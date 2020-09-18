@@ -60,10 +60,12 @@ def is_swearing(user_in):
 
 
 def is_leaving(user_in):
-    # regex = r".*((\bgoodbye\b)|(\bfarewell\b)|(\bstop\b)|(\bexit\b)|(\bi'?m\sleaving\b)|((\bto\b)|(" \
-    #         r"\bgonna\b)\sleave\b)).* "
-    # return not re.match(regex, user_in, re.MULTILINE | re.IGNORECASE) is None
-    return user_in == 'goodbye'
+    regex = r".*((\bgoodbye\b)|(\bfarewell\b)|(\bstop\b)|(\bexit\b)|(\bi'?m\sleaving\b)|((\bto\b)|(" \
+             r"\bgonna\b)\sleave\b)).* "
+    if re.match(regex, user_in, re.MULTILINE | re.IGNORECASE):
+        return True
+    else:
+        return False
 
 
 def is_derailment(user_in):
@@ -151,8 +153,8 @@ def main_script():
     name = extract_name(scan(ask_name()))
     major = extract_major(scan(ask_major()))
     feelings = extract_feelings(scan(ask_feelings()))
-    if name == '':
-        print('\n[eliza] See ya\n\n')
+    if name == 'Goodbye':
+        print('\n[eliza] See ya')
     else:
         print('\n[eliza] It was nice talking to you, ' + name + '. Have a great rest of your day.')
 
