@@ -25,7 +25,6 @@ def randologue(option_array):
 # description:  uses the profanity module to detect foul language. requests the user
 #               to rephrase themselves until no profanity is present
 def clean_input(eliza_string):
-    user_in = input(eliza_string)
     while profanity.contains_profanity(user_in):
         options = [
             "\n[eliza] Hey! There's no need for that kind of language.\n",
@@ -36,6 +35,20 @@ def clean_input(eliza_string):
         print("[eliza] Now like I was saying...")
         user_in = input(eliza_string)
     return user_in
+
+
+def question_input(eliza_string):
+    return eliza_string
+
+
+# input:        string containing any number of topics to derail conversation
+# output:       the user's answer to the original question
+# description:  calls clean_input, question_input, etc. to scan for any immediate things to address
+def scan_input(eliza_string):
+    user_in = input(eliza_string)
+    scanned_input = clean_input(eliza_string)
+    scanned_input = question_input(eliza_string)
+    return scanned_input
 
 
 # input:        string that contains a user's first name
@@ -60,6 +73,16 @@ def major_extractor(test_str):
     return result
 
 
+def congratulate_name():
+    options = [
+        '\n[eliza] ' + name + ', that\'s right. I think I remember you from orientation. What is your major?\n\n',
+        '\n[eliza] Hi ' + name + '. Tell me again what your major was.\n\n',
+        '\n[eliza] Oh, ' + name + '. I knew it was something with a(n) ' + name[:1] + '. What\'s your major?\n\n'
+    ]
+    result = randologue(options)
+    return result
+
+
 # input:        none. the major is stored globally
 # output:       a string containing trivial banter about the user's major
 # description:  generates a string of the form "{person i know} is a ____ major as well"
@@ -73,7 +96,7 @@ def congratulate_major():
         "My pen pal",
     ]
     result = "\n[eliza] Oh wow! " + randologue(
-        person) + " is a " + major + " major actually. How are you liking it so far?\n\n"
+        person) + " is a(n) " + major + " major actually. How are you liking it so far?\n\n"
     return result
 
 
@@ -82,13 +105,13 @@ def congratulate_major():
 def introduction():
     global name, major
     print("This is Eliza the Academic Advisor, made by Jacob Schnoor")
-    user_in = clean_input("\n[eliza] Hi I'm Eliza. Remind me what your name is again?\n\n")
+    user_in = scan_input("\n[eliza] Hi I'm Eliza. Remind me what your name is?\n\n")
     name = name_extractor(user_in)
-    user_in = clean_input('\n[eliza] ' + name + ', that\'s right. I think I remember you from orientation. What is '
-                                                'your major?\n\n')
+    user_in = scan_input(congratulate_name())
     major = major_extractor(user_in)
-    user_in = clean_input(congratulate_major())
+    user_in = scan_input(congratulate_major())
     # sentiment analysis
+
 
 introduction()
 
