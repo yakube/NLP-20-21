@@ -1,10 +1,18 @@
 import re
 from random import *
-from profanity_check import predict, predict_prob
+from profanity_check import predict
 
 name = ''
 my_rand_int = randint(0, 19)
 
+
+def clean_input(eliza_string):
+    user_in = input(eliza_string)
+    while predict(user_in) == 1:
+        print("Don't swear")
+        print("Now like I was saying...")
+        user_in = input(eliza_string)
+    return user_in
 
 # input:        string that contains a user's first name
 # output:       the user's first name
@@ -19,7 +27,8 @@ def name_extractor(test_str):
 
 def introduction():
     print("This is Eliza the Academic Advisor, made by Jacob Schnoor\n")
-    name = name_extractor(input("[eliza] Hi I'm Eliza. Remind me what your name is again?\n\n"))
+    user_in = clean_input("[eliza] Hi I'm Eliza. Remind me what your name is again?\n\n")
+    name = name_extractor(user_in)
     print('\nHi ' + name + '. What is your major?')
 
 
