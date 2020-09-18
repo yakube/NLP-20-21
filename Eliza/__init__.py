@@ -2,8 +2,81 @@ import re
 from random import randint
 from profanity import profanity
 
-global name, major
+name = major = ''
 my_rand_int = randint(0, 19)
+said_goodbye = False
+
+
+def ask_name():
+    return [
+        '\n[eliza] Hi my name is Eliza. What\'s your name?\n\n'
+    ]
+
+
+def ask_major():
+    return [
+        '\n[eliza] ' + name + ', that\'s right. I think I remember you from orientation. What is your major?\n\n',
+        '\n[eliza] Hi ' + name + '. Tell me again what your major was.\n\n',
+        '\n[eliza] Oh, ' + name + '. I knew it was something that started with ' + name[
+                                                                                   :1] + '. What\'s your major?\n\n',
+        '\n[eliza] Yeah, ' + name + '. I thought you looked familiar. What\'s your major?\n\n',
+    ]
+
+
+def ask_feelings():
+    return [
+        '\n[eliza] So your major is ' + major + '? How are you liking it so far?\n\n',
+    ]
+
+
+def respond_swear():
+    return [
+        '\n[eliza] Hey! There\'s no need for that kind of language.\n\n',
+        '\n[eliza] Please don\'t use profanity.\n\n',
+        '\n[eliza] That is highly inappropriate.\n\n',
+    ]
+
+
+def respond_bye():
+    return [
+        '\n[eliza] Oh, are you leaving?\n\n',
+        '\n[eliza] Is that all you needed?\n\n',
+        '\n[eliza] Will that be all for today?\n\n',
+    ]
+
+
+def topic_change():
+    return [
+        '\n[eliza] Anyways, like I was saying...',
+    ]
+
+
+def is_swearing(user_in):
+    return profanity.contains_profanity(user_in)
+
+
+# def is_question(user_in):
+#     return True
+
+
+def is_leaving(user_in):
+    # regex = r".*((\bgoodbye\b)|(\bfarewell\b)|(\bstop\b)|(\bexit\b)|(\bi'?m\sleaving\b)|((\bto\b)|(" \
+    #         r"\bgonna\b)\sleave\b)).* "
+    # return not re.match(regex, user_in, re.MULTILINE | re.IGNORECASE) is None
+    return user_in == 'goodbye'
+
+
+def is_derailment(user_in):
+    global said_goodbye
+    off_topic = False
+    if is_swearing(user_in):
+        off_topic = True
+    # elif is_question(user_in):
+    #     off_topic = True
+    elif is_leaving(user_in):
+        off_topic = True
+        said_goodbye = True
+    return off_topic
 
 
 # input:        array of dialogue options to be cycled through
@@ -20,42 +93,35 @@ def randologue(option_array):
     return option
 
 
-# input:        string that may potentially contain offensive or abusive language
-# output:       a string containing no profanity
-# description:  uses the profanity module to detect foul language. requests the user
-#               to rephrase themselves until no profanity is present
-def clean_input(eliza_string):
-    while profanity.contains_profanity(user_in):
-        options = [
-            "\n[eliza] Hey! There's no need for that kind of language.\n",
-            "\n[eliza] Please don't use profanity.\n",
-            "\n[eliza] That is highly inappropriate.\n"
-        ]
-        print(randologue(options))
-        print("[eliza] Now like I was saying...")
-        user_in = input(eliza_string)
-    return user_in
-
-
-def question_input(eliza_string):
-    return eliza_string
-
-
 # input:        string containing any number of topics to derail conversation
 # output:       the user's answer to the original question
 # description:  calls clean_input, question_input, etc. to scan for any immediate things to address
-def scan_input(eliza_string):
-    user_in = input(eliza_string)
-    scanned_input = clean_input(eliza_string)
-    scanned_input = question_input(eliza_string)
-    return scanned_input
+def scan(options):
+    if said_goodbye:
+        user_in = 'GOODBYE'
+    else:
+        user_in = input(randologue(options))
+        if is_derailment(user_in):
+            while is_derailment(user_in):
+                response = '\n[eliza] ...\n'
+                if is_swearing(user_in):
+                    response = randologue(respond_swear())
+                # elif is_question(user_in)
+                #     response = respond_question(user_in)
+                elif is_leaving(user_in):
+                    response = randologue(respond_bye())
+                user_in = input(response)
+            if not said_goodbye:
+                print(randologue(topic_change()))
+            user_in = scan(options)
+    return user_in
 
 
 # input:        string that contains a user's first name
 # output:       the user's first name
 # description:  scans the sentence for instances such as "my name is..." or "i am..." then
 #               grabs the following word. otherwise it will just grab the first word
-def name_extractor(test_str):
+def extract_name(test_str):
     regex = r"((.*\bmy\sname\sis\s)|(.*\bi\sam\s)|(.*\bi'?m\s)|(^\s))?(\S+)\b(.*)"
     subst = "\\6"
     result = re.sub(regex, subst, test_str, 0, re.MULTILINE | re.IGNORECASE).title()
@@ -66,54 +132,32 @@ def name_extractor(test_str):
 # output:       the user's major
 # description:  scans the sentence for instances such as "my major is..." or "i'm studying..." then
 #               grabs the following words. otherwise it will just grab the first words
-def major_extractor(test_str):
+def extract_major(test_str):
     regex = r"(^.*((\bis\b)|(\bwas\b)|(\bbe\b)|(\bit'?s\b)|(\bstudy(ing)?\b))\s)?(.*)"
     subst = "\\9"
     result = re.sub(regex, subst, test_str, 0, re.MULTILINE | re.IGNORECASE).title()
     return result
 
 
-def congratulate_name():
-    options = [
-        '\n[eliza] ' + name + ', that\'s right. I think I remember you from orientation. What is your major?\n\n',
-        '\n[eliza] Hi ' + name + '. Tell me again what your major was.\n\n',
-        '\n[eliza] Oh, ' + name + '. I knew it was something with a(n) ' + name[:1] + '. What\'s your major?\n\n'
-    ]
-    result = randologue(options)
-    return result
-
-
-# input:        none. the major is stored globally
-# output:       a string containing trivial banter about the user's major
-# description:  generates a string of the form "{person i know} is a ____ major as well"
-def congratulate_major():
-    person = [
-        "My mom",
-        "My dad",
-        "My cousin",
-        "My friend",
-        "My neighbor",
-        "My pen pal",
-    ]
-    result = "\n[eliza] Oh wow! " + randologue(
-        person) + " is a(n) " + major + " major actually. How are you liking it so far?\n\n"
-    return result
+def extract_feelings(test_str):
+    return test_str
 
 
 # description:  the main sequence of greetings to begin conversation with Eliza
 #               links to various other parts of the program
-def introduction():
+def main_script():
     global name, major
     print("This is Eliza the Academic Advisor, made by Jacob Schnoor")
-    user_in = scan_input("\n[eliza] Hi I'm Eliza. Remind me what your name is?\n\n")
-    name = name_extractor(user_in)
-    user_in = scan_input(congratulate_name())
-    major = major_extractor(user_in)
-    user_in = scan_input(congratulate_major())
-    # sentiment analysis
+    name = extract_name(scan(ask_name()))
+    major = extract_major(scan(ask_major()))
+    feelings = extract_feelings(scan(ask_feelings()))
+    if name == '':
+        print('\n[eliza] See ya\n\n')
+    else:
+        print('\n[eliza] It was nice talking to you, ' + name + '. Have a great rest of your day.')
 
 
-introduction()
+main_script()
 
 # regex = r"(?:(?:I|you|he|she|they|we|it)(?:.*)\s(?:know|think|feel|seem)s?(?:\sthat\s)?(?:\slike\s)?)?(.*)\bme\b([
 # ^!\.?\n]*)(.*)$"
