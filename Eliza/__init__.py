@@ -7,6 +7,55 @@ my_rand_int = randint(0, 19)
 said_goodbye = False
 
 
+def pronoun_flip(user_in):
+    # start out capitalized
+    user_in = user_in.capitalize()
+
+    # expand out contractions
+    user_in = re.sub(r"\bi'?m\b", "I am", user_in, 0, re.MULTILINE | re.IGNORECASE)
+    user_in = re.sub(r"(?<=\w)'re\b", " are", user_in, 0, re.MULTILINE | re.IGNORECASE)
+    user_in = re.sub(r"(?<=\w)n't\b", " not", user_in, 0, re.MULTILINE | re.IGNORECASE)
+    user_in = re.sub(r"(?<=\w)'ll\b", " will", user_in, 0, re.MULTILINE | re.IGNORECASE)
+
+    # convert second person to coded words
+    user_in = re.sub(r"(\b(?<=\byou\b\s)\bare\b)", "##a3##", user_in, 0, re.MULTILINE | re.IGNORECASE)
+    user_in = re.sub(r"(\bare\b(?=\s\byou\b))", "##a3##", user_in, 0, re.MULTILINE | re.IGNORECASE)
+    user_in = re.sub(r"(\b(?<=\byou\b\s)\bwere\b)", "##w3s##", user_in, 0, re.MULTILINE | re.IGNORECASE)
+    user_in = re.sub(r"(\bwere\b(?=\s\byou\b))", "##w3s##", user_in, 0, re.MULTILINE | re.IGNORECASE)
+    user_in = re.sub(r"(\byourself\b)", "##m1self##", user_in, 0, re.MULTILINE | re.IGNORECASE)
+    user_in = re.sub(r"(\byours\b)", "##m1ne##", user_in, 0, re.MULTILINE | re.IGNORECASE)
+    user_in = re.sub(r"(\byour\b)", "##m1##)", user_in, 0, re.MULTILINE | re.IGNORECASE)
+    user_in = re.sub(r"(\b^(.*((\bthat\b)|(\bthink\b)|(\bhope\b)|(\bguess\b))\s)?you\b)", "##1##", user_in, 0,
+                     re.MULTILINE | re.IGNORECASE)
+    user_in = re.sub(r"(\byou\b)", "##m3##", user_in, 0, re.MULTILINE | re.IGNORECASE)
+
+    # convert first person to second person
+    user_in = re.sub(r"(\bmyself\b)", "yourself", user_in, 0, re.MULTILINE | re.IGNORECASE)
+    user_in = re.sub(r"(\bmine\b)", "yours", user_in, 0, re.MULTILINE | re.IGNORECASE)
+    user_in = re.sub(r"(\bmy\b)", "your", user_in, 0, re.MULTILINE | re.IGNORECASE)
+    user_in = re.sub(r"(\bme\b)", "you", user_in, 0, re.MULTILINE | re.IGNORECASE)
+    user_in = re.sub(r"(\bi\b)", "you", user_in, 0, re.MULTILINE | re.IGNORECASE)
+    user_in = re.sub(r"(\bam\b)", "are", user_in, 0, re.MULTILINE | re.IGNORECASE)
+    user_in = re.sub(r"(\b(?<=\bi\b\s)\bwas\b)", "were", user_in, 0, re.MULTILINE | re.IGNORECASE)
+    user_in = re.sub(r"(\bwas\b(?=\s\bi\b))", "were", user_in, 0, re.MULTILINE | re.IGNORECASE)
+
+    # convert coded words to first person
+    user_in = re.sub(r"(##m1self##)", "myself", user_in, 0, re.MULTILINE | re.IGNORECASE)
+    user_in = re.sub(r"(##m1ne##)", "mine", user_in, 0, re.MULTILINE | re.IGNORECASE)
+    user_in = re.sub(r"(##m1##)", "my", user_in, 0, re.MULTILINE | re.IGNORECASE)
+    user_in = re.sub(r"(##1##)", "I", user_in, 0, re.MULTILINE | re.IGNORECASE)
+    user_in = re.sub(r"(##m3##)", "me", user_in, 0, re.MULTILINE | re.IGNORECASE)
+    user_in = re.sub(r"(##a3##)", "am", user_in, 0, re.MULTILINE | re.IGNORECASE)
+    user_in = re.sub(r"(##w3s##)", "was", user_in, 0, re.MULTILINE | re.IGNORECASE)
+
+    # fixing miscellaneous subject/object confusions
+    user_in = re.sub(r"(?<=\bam\b\s)\bme\b", "I", user_in, 0, re.MULTILINE | re.IGNORECASE)
+    user_in = re.sub(r"\bme\b(?=\s\bam\b)", "I", user_in, 0, re.MULTILINE | re.IGNORECASE)
+    user_in = re.sub(r"(?<=\bwas\b\s)\bme\b", "I", user_in, 0, re.MULTILINE | re.IGNORECASE)
+    user_in = re.sub(r"\bme\b(?=\s\bwas\b)", "I", user_in, 0, re.MULTILINE | re.IGNORECASE)
+    return user_in
+
+
 def ask_name():
     return [
         '\n[eliza] Hi my name is Eliza. What\'s your name?\n\n'
@@ -37,6 +86,18 @@ def respond_swear():
     ]
 
 
+# def respond_question_request():
+#     return [
+#         '\n[eliza] Hey! There\'s no need for that kind of language.\n\n',
+#         '\n[eliza] Please don\'t use profanity.\n\n',
+#         '\n[eliza] That is highly inappropriate.\n\n',
+#     ]
+
+
+def respond_question(user_in):
+    return [' ']
+
+
 def respond_bye():
     return [
         '\n[eliza] Oh, are you leaving?\n\n',
@@ -55,13 +116,17 @@ def is_swearing(user_in):
     return profanity.contains_profanity(user_in)
 
 
+# def is_question_request(user_in):
+#     return True
+
+
 # def is_question(user_in):
 #     return True
 
 
 def is_leaving(user_in):
     regex = r".*((\bgoodbye\b)|(\bfarewell\b)|(\bstop\b)|(\bexit\b)|(\bi'?m\sleaving\b)|((\bto\b)|(" \
-             r"\bgonna\b)\sleave\b)).* "
+            r"\bgonna\b)\sleave\b)).* "
     if re.match(regex, user_in, re.MULTILINE | re.IGNORECASE):
         return True
     else:
@@ -73,6 +138,8 @@ def is_derailment(user_in):
     off_topic = False
     if is_swearing(user_in):
         off_topic = True
+    # elif is_question_request(user_in):
+    #     off_topic = True
     # elif is_question(user_in):
     #     off_topic = True
     elif is_leaving(user_in):
@@ -109,7 +176,7 @@ def scan(options):
                 if is_swearing(user_in):
                     response = randologue(respond_swear())
                 # elif is_question(user_in)
-                #     response = respond_question(user_in)
+                #     response = randologue(respond_question(user_in))
                 elif is_leaving(user_in):
                     response = randologue(respond_bye())
                 user_in = input(response)
@@ -150,6 +217,7 @@ def extract_feelings(test_str):
 def main_script():
     global name, major
     print("This is Eliza the Academic Advisor, made by Jacob Schnoor")
+    print(pronoun_flip(input("Pronoun Flip: ")))
     name = extract_name(scan(ask_name()))
     major = extract_major(scan(ask_major()))
     feelings = extract_feelings(scan(ask_feelings()))
