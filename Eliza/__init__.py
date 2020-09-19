@@ -25,7 +25,7 @@ def pronoun_flip(user_in):
     user_in = re.sub(r"(\byourself\b)", "##m1self##", user_in, 0, re.MULTILINE | re.IGNORECASE)
     user_in = re.sub(r"(\byours\b)", "##m1ne##", user_in, 0, re.MULTILINE | re.IGNORECASE)
     user_in = re.sub(r"(\byour\b)", "##m1##)", user_in, 0, re.MULTILINE | re.IGNORECASE)
-    user_in = re.sub(r"(\b^(.*((\bthat\b)|(\bthink\b)|(\bhope\b)|(\bguess\b))\s)?you\b)", "##1##", user_in, 0,
+    user_in = re.sub(r"(^(.*((\bthat\b)|(\bthink\b)|(\bhope\b)|(\bguess\b))\s)?you\b)", "##1##", user_in, 0,
                      re.MULTILINE | re.IGNORECASE)
     user_in = re.sub(r"(\byou\b)", "##m3##", user_in, 0, re.MULTILINE | re.IGNORECASE)
 
