@@ -8,12 +8,13 @@ said_goodbye = False
 
 
 def pronoun_flip(user_in):
-    # start out capitalized
-    user_in = user_in.capitalize()
+    # start out lowercase
+    user_in = user_in.lower()
 
     # expand out contractions
     user_in = re.sub(r"\bi'?m\b", "I am", user_in, 0, re.MULTILINE | re.IGNORECASE)
     user_in = re.sub(r"(?<=\w)'re\b", " are", user_in, 0, re.MULTILINE | re.IGNORECASE)
+    user_in = re.sub(r"\bcan'?t\b", "can not", user_in, 0, re.MULTILINE | re.IGNORECASE)
     user_in = re.sub(r"(?<=\w)n't\b", " not", user_in, 0, re.MULTILINE | re.IGNORECASE)
     user_in = re.sub(r"(?<=\w)'ll\b", " will", user_in, 0, re.MULTILINE | re.IGNORECASE)
 
@@ -24,7 +25,7 @@ def pronoun_flip(user_in):
     user_in = re.sub(r"(\bwere\b(?=\s\byou\b))", "##w3s##", user_in, 0, re.MULTILINE | re.IGNORECASE)
     user_in = re.sub(r"(\byourself\b)", "##m1self##", user_in, 0, re.MULTILINE | re.IGNORECASE)
     user_in = re.sub(r"(\byours\b)", "##m1ne##", user_in, 0, re.MULTILINE | re.IGNORECASE)
-    user_in = re.sub(r"(\byour\b)", "##m1##)", user_in, 0, re.MULTILINE | re.IGNORECASE)
+    user_in = re.sub(r"(\byour\b)", "##m1##", user_in, 0, re.MULTILINE | re.IGNORECASE)
     user_in = re.sub(r"(^(.*((\bthat\b)|(\bthink\b)|(\bhope\b)|(\bguess\b))\s)?you\b)", "##1##", user_in, 0,
                      re.MULTILINE | re.IGNORECASE)
     user_in = re.sub(r"(\byou\b)", "##m3##", user_in, 0, re.MULTILINE | re.IGNORECASE)
@@ -53,6 +54,8 @@ def pronoun_flip(user_in):
     user_in = re.sub(r"\bme\b(?=\s\bam\b)", "I", user_in, 0, re.MULTILINE | re.IGNORECASE)
     user_in = re.sub(r"(?<=\bwas\b\s)\bme\b", "I", user_in, 0, re.MULTILINE | re.IGNORECASE)
     user_in = re.sub(r"\bme\b(?=\s\bwas\b)", "I", user_in, 0, re.MULTILINE | re.IGNORECASE)
+    user_in = re.sub(r"(?<=\bdo\b\s)\bme\b", "I", user_in, 0, re.MULTILINE | re.IGNORECASE)
+    user_in = re.sub(r"\bme\b(?=\s\bdo\b)", "I", user_in, 0, re.MULTILINE | re.IGNORECASE)
     return user_in
 
 
@@ -78,6 +81,27 @@ def ask_feelings():
     ]
 
 
+def ask_hometown():
+    return [
+        '\n[eliza] What is your hometown?\n\n',
+        '\n[eliza] Where are you from?\n\n',
+    ]
+
+
+def ask_gradyear():
+    return [
+        '\n[eliza] What year do you expect to graduate?\n\n',
+        '\n[eliza] When do you think you\'ll graduate?\n\n',
+    ]
+
+
+def ask_other():
+    return [
+        '\n[eliza] Well if you didn\'t have any other questions then I guess I\'ll be on my way...\n\n',
+        '\n[eliza] So I\'m assuming you don\'t have any other questions for me...\n\n',
+    ]
+
+
 def respond_swear():
     return [
         '\n[eliza] Hey! There\'s no need for that kind of language.\n\n',
@@ -86,16 +110,36 @@ def respond_swear():
     ]
 
 
-# def respond_question_request():
-#     return [
-#         '\n[eliza] Hey! There\'s no need for that kind of language.\n\n',
-#         '\n[eliza] Please don\'t use profanity.\n\n',
-#         '\n[eliza] That is highly inappropriate.\n\n',
-#     ]
+def respond_question_request():
+    return [
+        '\n[eliza] Sure. What did you want to ask me?\n\n',
+        '\n[eliza] What\'s your question\n\n',
+    ]
 
 
 def respond_question(user_in):
-    return [' ']
+    responses = []
+    # Generic response regardless of question type
+    regex = r"^(.*[\.!,]\s)?((\bcan('?t)?\b)|(\bwould(n'?t)?\b)|(\bis(n'?t)?\b)|(\bare(n'?t)?\b)|(\bwill\b)|(" \
+            r"\bwon'?t\b)|(\bwho('?se?)?\b)|(\bwhat('?s)?\b)|(\bwhere('?s)?\b)|(\bwhen('?s)?\b)|(\bwhy\b)|(\bhow\b)|(" \
+            r"\bshould(n'?t)?\b)|(\bdo(n'?t)?\b))\s([^?\n]*)(\?)?$"
+    subst = "Why do you ask \\2 \\27?"
+    responses.append(
+        '\n[eliza] ' + re.sub(regex, subst, pronoun_flip(user_in), 0, re.MULTILINE | re.IGNORECASE) + '\n\n')
+
+    # Where/Why/How do/does/did questions
+    regex = r"^(.*[\.!,]\s)?(\b(why|where|when|how)\s(do(es)?|did)\b)\s([^?\n]*)(\?)?$"
+    if re.match(regex, user_in, re.MULTILINE | re.IGNORECASE):
+        subst = "\\3 do you think \\6?"
+        statement = re.sub(regex, subst, pronoun_flip(user_in), 0, re.MULTILINE | re.IGNORECASE)
+        responses.append('\n[eliza] ' + statement + '\n\n')
+
+    # Where/Why/How do/does/did questions
+    regex = r"^(.*[\.!,]\s)?(\bhow\s(many|much)\b)\s([^?\n]*)(\?)?$"
+    if re.match(regex, user_in, re.MULTILINE | re.IGNORECASE):
+        responses.append('\n[eliza] At least ' + str(my_rand_int * 7 + 3) + '\n\n')
+
+    return responses
 
 
 def respond_bye():
@@ -106,9 +150,63 @@ def respond_bye():
     ]
 
 
+def respond_apology():
+    return [
+        '\n[eliza] It\'s okay\n\n',
+        '\n[eliza] Apology accepted\n\n',
+        '\n[eliza] You are forgiven\n\n',
+    ]
+
+
+def respond_unsure():
+    return [
+        '\n[eliza] You sound confused.\n\n',
+        '\n[eliza] What don\'t you know?\n\n',
+        '\n[eliza] Is there something I can clarify for you?\n\n',
+    ]
+
+
+def respond_declaration(user_in):
+    responses = []
+
+    # I am ____ statements
+    regex_i_am = r"^(.*[\.!?,]\s)?\bi\sam\b\s(.*)"
+    # I ____ statements
+    regex_i = r"^(.*[\.!?,]\s)?\bi\b\s(.*)"
+    if re.match(regex_i_am, user_in, re.MULTILINE | re.IGNORECASE):
+        subst = "Why are you \\2?"
+        statement = re.sub(regex_i_am, subst, pronoun_flip(user_in), 0, re.MULTILINE | re.IGNORECASE)
+        responses.append('\n[eliza] ' + statement + '\n\n')
+    elif re.match(regex_i, user_in, re.MULTILINE | re.IGNORECASE):
+        subst = "Why do you \\2?"
+        statement = re.sub(regex_i, subst, pronoun_flip(user_in), 0, re.MULTILINE | re.IGNORECASE)
+        responses.append('\n[eliza] ' + statement + '\n\n')
+    else:
+        responses.append('\n[eliza] ...\n\n')
+
+    # You are ____ statements
+    regex_you_are = r"^(.*[\.!?,]\s)?\byou\sare\b\s(.*)"
+    # You ____ statements
+    regex_you = r"^(.*[\.!?,]\s)?\byou\b\s(.*)"
+    if re.match(regex_you_are, user_in, re.MULTILINE | re.IGNORECASE):
+        subst = "Why am I \\2?"
+        statement = re.sub(regex_i_am, subst, pronoun_flip(user_in), 0, re.MULTILINE | re.IGNORECASE)
+        responses.append('\n[eliza] ' + statement + '\n\n')
+    elif re.match(regex_you, user_in, re.MULTILINE | re.IGNORECASE):
+        subst = "Why do I \\2?"
+        statement = re.sub(regex_i, subst, pronoun_flip(user_in), 0, re.MULTILINE | re.IGNORECASE)
+        responses.append('\n[eliza] ' + statement + '\n\n')
+    else:
+        responses.append('\n[eliza] ...\n\n')
+
+    return responses
+
+
 def topic_change():
     return [
         '\n[eliza] Anyways, like I was saying...',
+        '\n[eliza] So I don\'t think you actually answered this yet...',
+        '\n[eliza] So getting back on topic...',
     ]
 
 
@@ -116,17 +214,50 @@ def is_swearing(user_in):
     return profanity.contains_profanity(user_in)
 
 
-# def is_question_request(user_in):
-#     return True
+def is_question_request(user_in):
+    regex = r".*\b(question|ask)\b.*"
+    if re.match(regex, user_in, re.MULTILINE | re.IGNORECASE):
+        return True
+    else:
+        return False
 
 
-# def is_question(user_in):
-#     return True
+def is_question(user_in):
+    regex = r"^(.*[\.!,]\s)?((\bcan('?t)?\b)|(\bwould(n'?t)?\b)|(\bis(n'?t)?\b)|(\bare(n'?t)?\b)|(\bwill\b)|(" \
+            r"\bwon'?t\b)|(\bwho('?se?)?\b)|(\bwhat('?s)?\b)|(\bwhere('?s)?\b)|(\bwhen('?s)?\b)|(\bwhy\b)|(\bhow\b)|(" \
+            r"\bshould(n'?t)?\b)|(\bdo(n'?t)?\b))\s([^?\n]*)(\?)?$"
+    if re.match(regex, user_in, re.MULTILINE | re.IGNORECASE):
+        return True
+    else:
+        return False
 
 
 def is_leaving(user_in):
-    regex = r".*((\bgoodbye\b)|(\bfarewell\b)|(\bstop\b)|(\bexit\b)|(\bi'?m\sleaving\b)|((\bto\b)|(" \
-            r"\bgonna\b)\sleave\b)).* "
+    regex = r".*((\bgoodbye\b)|(\bfarewell\b)|(\bstop\b)|(\bexit\b)|(\bi'?m\sleaving\b)|(\b(to|will|gonna)\sleave\b)).*"
+    if re.match(regex, user_in, re.MULTILINE | re.IGNORECASE):
+        return True
+    else:
+        return False
+
+
+def is_apologizing(user_in):
+    regex = r".*\b(sorry)\b.*"
+    if re.match(regex, user_in, re.MULTILINE | re.IGNORECASE):
+        return True
+    else:
+        return False
+
+
+def is_declaring(user_in):
+    regex = r"^(.*[\.!?,])?\b((i)|(you)\s?((\bare\b)|(\bis\b))?\s)\b(.*)"
+    if re.match(regex, user_in, re.MULTILINE | re.IGNORECASE):
+        return True
+    else:
+        return False
+
+
+def is_unsure(user_in):
+    regex = r".*\b(confused?|i\sdon'?t\sknow)\b.*"
     if re.match(regex, user_in, re.MULTILINE | re.IGNORECASE):
         return True
     else:
@@ -135,15 +266,16 @@ def is_leaving(user_in):
 
 def is_derailment(user_in):
     global said_goodbye
-    off_topic = False
-    if is_swearing(user_in):
-        off_topic = True
-    # elif is_question_request(user_in):
-    #     off_topic = True
-    # elif is_question(user_in):
-    #     off_topic = True
-    elif is_leaving(user_in):
-        off_topic = True
+    off_topic = (
+            is_swearing(user_in)
+            | is_question(user_in)
+            | is_question_request(user_in)
+            | is_leaving(user_in)
+            | is_apologizing(user_in)
+            | is_declaring(user_in)
+            | is_unsure(user_in)
+    )
+    if is_leaving(user_in):
         said_goodbye = True
     return off_topic
 
@@ -166,19 +298,28 @@ def randologue(option_array):
 # output:       the user's answer to the original question
 # description:  calls clean_input, question_input, etc. to scan for any immediate things to address
 def scan(options):
+    global said_goodbye
     if said_goodbye:
         user_in = 'GOODBYE'
     else:
         user_in = input(randologue(options))
         if is_derailment(user_in):
             while is_derailment(user_in):
-                response = '\n[eliza] ...\n'
+                response = '\n[eliza] ...\n\n'
                 if is_swearing(user_in):
                     response = randologue(respond_swear())
-                # elif is_question(user_in)
-                #     response = randologue(respond_question(user_in))
+                elif is_question_request(user_in):
+                    response = randologue(respond_question_request())
+                elif is_question(user_in):
+                    response = randologue(respond_question(user_in))
+                elif is_apologizing(user_in):
+                    response = randologue(respond_apology())
+                elif is_unsure(user_in):
+                    response = randologue(respond_unsure())
                 elif is_leaving(user_in):
                     response = randologue(respond_bye())
+                elif is_declaring(user_in):
+                    response = randologue(respond_declaration(user_in))
                 user_in = input(response)
             if not said_goodbye:
                 print(randologue(topic_change()))
@@ -208,19 +349,18 @@ def extract_major(test_str):
     return result
 
 
-def extract_feelings(test_str):
-    return test_str
-
-
 # description:  the main sequence of greetings to begin conversation with Eliza
 #               links to various other parts of the program
 def main_script():
     global name, major
     print("This is Eliza the Academic Advisor, made by Jacob Schnoor")
-    print(pronoun_flip(input("Pronoun Flip: ")))
+    # print(pronoun_flip(input("Pronoun Flip: ")))
     name = extract_name(scan(ask_name()))
     major = extract_major(scan(ask_major()))
-    feelings = extract_feelings(scan(ask_feelings()))
+    scan(ask_feelings())
+    scan(ask_hometown())
+    scan(ask_gradyear())
+    scan((ask_other()))
     if name == 'Goodbye':
         print('\n[eliza] See ya')
     else:
