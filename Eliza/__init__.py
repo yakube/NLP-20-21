@@ -137,14 +137,17 @@ def respond_question(user_in):
     regex_why_does = r"^(.*[\.!,]\s)?(\b(why|where|when|how)\s(do(es)?|did)\b)\s([^?\n]*)(\?)?$"
 
     # How much/many questions
-    regex_how_many = r"^(.*[\.!,]\s)?(\bhow\s(many|much)\b)\s([^?\n]*)(\?)?$"
+    regex_how_many = r"^(.*[\.!,]\s)?(\bhow\s(many|much)\b)\s([^?\n]*)((\bi\b)|(\byou\b)|(\bs?he\b)|(\bthey\b))([" \
+                     r"^?\n]*)(\?)?$"
 
     if re.match(regex_why_does, user_in, re.MULTILINE | re.IGNORECASE):
         subst = "\\3 do you think \\6?"
         statement = re.sub(regex_why_does, subst, pronoun_flip(user_in), 0, re.MULTILINE | re.IGNORECASE)
         responses.append('\n[eliza] ' + statement + '\n\n')
     elif re.match(regex_how_many, user_in, re.MULTILINE | re.IGNORECASE):
-        responses.append('\n[eliza] At least ' + str(my_rand_int * 7 + 3) + '\n\n')
+        subst = "How many \\4i think \\6\\10?"
+        statement = pronoun_flip(re.sub(regex_how_many, subst, user_in, 0, re.MULTILINE | re.IGNORECASE)).capitalize()
+        responses.append('\n[eliza] ' + statement + '\n\n')
     else:
         subst = "Why do you ask \\2 \\27?"
         responses.append(
@@ -376,17 +379,38 @@ def extract_major(test_str):
     return result
 
 
+def extract_hometown(test_str):
+    regex = r"^((.*\bfrom\s\b)|(.*\bin\b\s))?(.*)"
+    subst = "\\4"
+    result = re.sub(regex, subst, test_str, 0, re.MULTILINE | re.IGNORECASE).title()
+    return result
+
+
+def extract_color(test_str):
+    regex = r"^((.*\bis\s\b)|(.*\bcolor\b\s))?(.*)"
+    subst = "\\4"
+    result = re.sub(regex, subst, test_str, 0, re.MULTILINE | re.IGNORECASE).title()
+    return result
+
+
 # description:  the main sequence of greetings to begin conversation with Eliza
 #               links to various other parts of the program
+
+
 def main_script():
     global name, major
     print("This is Eliza the Academic Advisor, made by Jacob Schnoor")
     # print(pronoun_flip(input("Pronoun Flip: ")))
     name = extract_name(scan(ask_name(), True))
     major = extract_major(scan(ask_major(), True))
-    scan(ask_feelings(), True)
-    scan(ask_hometown(), False)
-    scan(ask_gradyear(), False)
+    feelings = scan(ask_feelings(), True)
+    hometown = extract_hometown(scan(ask_hometown(), True))
+    scan(ask_gradyear(), True)
+    scan(["\n[eliza] What's your favorite color?\n\n"], False)
+    color = extract_color(scan(["\n[eliza] What's your favorite food?\n\n"], False))
+    scan(["\n[eliza] Why did you decide to study " + major + "?\n\n"], False)
+    scan(["\n[eliza] Are there a lot of " + major + " majors in " + hometown + "?\n\n"], False)
+    scan(["\n[eliza] So " + name + ", earlier you described " + major + " by saying " + pronoun_flip(feelings) + ". Does that still hold true?\n\n"], False)
     scan((ask_other()), False)
     if name == 'Goodbye':
         print('\n[eliza] See ya')
