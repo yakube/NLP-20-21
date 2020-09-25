@@ -7,6 +7,9 @@ my_rand_int = randint(0, 19)
 said_goodbye = False
 
 
+# input:
+# output:
+# description:
 def pronoun_flip(user_in):
     # start out lowercase
     user_in = user_in.lower()
@@ -59,12 +62,18 @@ def pronoun_flip(user_in):
     return user_in
 
 
+# input:
+# output:
+# description:
 def ask_name():
     return [
         '\n[eliza] Hi my name is Eliza. What\'s your name?\n\n'
     ]
 
 
+# input:
+# output:
+# description:
 def ask_major():
     return [
         '\n[eliza] ' + name + ', that\'s right. I think I remember you from orientation. What is your major?\n\n',
@@ -75,12 +84,18 @@ def ask_major():
     ]
 
 
+# input:
+# output:
+# description:
 def ask_feelings():
     return [
         '\n[eliza] So your major is ' + major + '? How are you liking it so far?\n\n',
     ]
 
 
+# input:
+# output:
+# description:
 def ask_hometown():
     return [
         '\n[eliza] What is your hometown?\n\n',
@@ -88,6 +103,9 @@ def ask_hometown():
     ]
 
 
+# input:
+# output:
+# description:
 def ask_gradyear():
     return [
         '\n[eliza] What year do you expect to graduate?\n\n',
@@ -95,6 +113,9 @@ def ask_gradyear():
     ]
 
 
+# input:
+# output:
+# description:
 def ask_other():
     return [
         '\n[eliza] Well if you didn\'t have any other questions then I guess I\'ll be on my way...\n\n',
@@ -102,6 +123,9 @@ def ask_other():
     ]
 
 
+# input:
+# output:
+# description:
 def respond_swear():
     return [
         '\n[eliza] Hey! There\'s no need for that kind of language.\n\n',
@@ -110,6 +134,9 @@ def respond_swear():
     ]
 
 
+# input:
+# output:
+# description:
 def respond_gibberish():
     return [
         '\n[eliza] I\'m sorry. I can\'t understand you.\n\n',
@@ -118,6 +145,9 @@ def respond_gibberish():
     ]
 
 
+# input:
+# output:
+# description:
 def respond_question_request():
     return [
         '\n[eliza] Sure. What did you want to ask me?\n\n',
@@ -125,13 +155,16 @@ def respond_question_request():
     ]
 
 
+# input:
+# output:
+# description:
 def respond_question(user_in):
     responses = []
 
     # Generic response regardless of question type
     regex_total = r"^(.*[\.!,]\s)?((\bcan('?t)?\b)|(\bwould(n'?t)?\b)|(\bis(n'?t)?\b)|(\bare(n'?t)?\b)|(\bwill\b)|(" \
-                  r"\bwon'?t\b)|(\bwho('?se?)?\b)|(\bwhat('?s)?\b)|(\bwhere('?s)?\b)|(\bwhen('?s)?\b)|(\bwhy\b)|(\bhow\b)|(" \
-                  r"\bshould(n'?t)?\b)|(\bdo(n'?t)?\b))\s([^?\n]*)(\?)?$"
+                  r"\bwon'?t\b)|(\bwho('?se?)?\b)|(\bwhat('?s)?\b)|(\bwhere('?s)?\b)|(\bwhen('?s)?\b)|(\bwhy\b)|(" \
+                  r"\bhow\b)|(\bshould(n'?t)?\b)|(\bdo(n'?t)?\b))\s([^?\n]*)(\?)?$"
 
     # Why/where/when do/does/did questions
     regex_why_does = r"^(.*[\.!,]\s)?(\b(why|where|when|how)\s(do(es)?|did)\b)\s([^?\n]*)(\?)?$"
@@ -156,6 +189,9 @@ def respond_question(user_in):
     return responses
 
 
+# input:
+# output:
+# description:
 def respond_bye():
     return [
         '\n[eliza] Oh, are you leaving?\n\n',
@@ -164,6 +200,9 @@ def respond_bye():
     ]
 
 
+# input:
+# output:
+# description:
 def respond_apology():
     return [
         '\n[eliza] It\'s okay\n\n',
@@ -172,6 +211,9 @@ def respond_apology():
     ]
 
 
+# input:
+# output:
+# description:
 def respond_unsure():
     return [
         '\n[eliza] You sound confused.\n\n',
@@ -180,6 +222,9 @@ def respond_unsure():
     ]
 
 
+# input:
+# output:
+# description:
 def respond_declaration(user_in):
     responses = []
 
@@ -219,6 +264,9 @@ def respond_declaration(user_in):
     return responses
 
 
+# input:
+# output:
+# description:
 def topic_change():
     return [
         '\n[eliza] Anyways, like I was saying...',
@@ -227,10 +275,16 @@ def topic_change():
     ]
 
 
+# input:
+# output:
+# description:
 def is_swearing(user_in):
     return profanity.contains_profanity(user_in)
 
 
+# input:
+# output:
+# description:
 def is_gibberish(user_in):
     regex = r"(((.*?)((^|[\n\t ])[^aeiouy\s\n0-9]+($|[\n\t ]))+(.*))|((.*?)(a{3,}|b{3,}|c{3,}|d{3,}|e{3,}|f{3,}|g{3," \
             r"}|h{3,}|i{3,}|j{3,}|k{3,}|l{3,}|m{3,}|n{3,}|o{3,}|p{3,}|q{3,}|r{3,}|s{3,}|t{3,}|u{3,}|v{3,}|w{3,}|x{3," \
@@ -241,6 +295,9 @@ def is_gibberish(user_in):
         return False
 
 
+# input:
+# output:
+# description:
 def is_question_request(user_in):
     regex = r".*\b(question|ask)\b.*"
     if re.match(regex, user_in, re.MULTILINE | re.IGNORECASE):
@@ -249,6 +306,9 @@ def is_question_request(user_in):
         return False
 
 
+# input:
+# output:
+# description:
 def is_question(user_in):
     regex = r"^(.*[\.!,]\s)?((\bcan('?t)?\b)|(\bwould(n'?t)?\b)|(\bis(n'?t)?\b)|(\bare(n'?t)?\b)|(\bwill\b)|(" \
             r"\bwon'?t\b)|(\bwho('?se?)?\b)|(\bwhat('?s)?\b)|(\bwhere('?s)?\b)|(\bwhen('?s)?\b)|(\bwhy\b)|(\bhow\b)|(" \
@@ -259,6 +319,9 @@ def is_question(user_in):
         return False
 
 
+# input:
+# output:
+# description:
 def is_leaving(user_in):
     regex = r".*((\bgoodbye\b)|(\bfarewell\b)|(\bstop\b)|(\bexit\b)|(\bi'?m\sleaving\b)|(\b(to|will|gonna)\sleave\b)).*"
     if re.match(regex, user_in, re.MULTILINE | re.IGNORECASE):
@@ -267,6 +330,9 @@ def is_leaving(user_in):
         return False
 
 
+# input:
+# output:
+# description:
 def is_apologizing(user_in):
     regex = r".*\b(sorry)\b.*"
     if re.match(regex, user_in, re.MULTILINE | re.IGNORECASE):
@@ -275,6 +341,9 @@ def is_apologizing(user_in):
         return False
 
 
+# input:
+# output:
+# description:
 def is_declaring(user_in):
     regex = r"^(.*[\.!?,]\s)?((\byou\b)|(\bi'?m?\b))(\s(\bam\b)|(\bare\b)|(\bis\b))?(.*)"
     if re.match(regex, user_in, re.MULTILINE | re.IGNORECASE):
@@ -283,6 +352,9 @@ def is_declaring(user_in):
         return False
 
 
+# input:
+# output:
+# description:
 def is_unsure(user_in):
     regex = r".*\b(confused?|i\sdon'?t\sknow)\b.*"
     if re.match(regex, user_in, re.MULTILINE | re.IGNORECASE):
@@ -291,6 +363,9 @@ def is_unsure(user_in):
         return False
 
 
+# input:
+# output:
+# description:
 def is_derailment(user_in, allow_i_am):
     global said_goodbye
     off_topic = (
@@ -379,6 +454,9 @@ def extract_major(test_str):
     return result
 
 
+# input:
+# output:
+# description:
 def extract_hometown(test_str):
     regex = r"^((.*\bfrom\s\b)|(.*\bin\b\s))?(.*)"
     subst = "\\4"
@@ -386,17 +464,9 @@ def extract_hometown(test_str):
     return result
 
 
-def extract_color(test_str):
-    regex = r"^((.*\bis\s\b)|(.*\bcolor\b\s))?(.*)"
-    subst = "\\4"
-    result = re.sub(regex, subst, test_str, 0, re.MULTILINE | re.IGNORECASE).title()
-    return result
-
-
-# description:  the main sequence of greetings to begin conversation with Eliza
-#               links to various other parts of the program
-
-
+# input:
+# output:
+# description:
 def main_script():
     global name, major
     print("This is Eliza the Academic Advisor, made by Jacob Schnoor")
@@ -407,10 +477,11 @@ def main_script():
     hometown = extract_hometown(scan(ask_hometown(), True))
     scan(ask_gradyear(), True)
     scan(["\n[eliza] What's your favorite color?\n\n"], False)
-    color = extract_color(scan(["\n[eliza] What's your favorite food?\n\n"], False))
+    scan(["\n[eliza] What's your favorite food?\n\n"], False)
     scan(["\n[eliza] Why did you decide to study " + major + "?\n\n"], False)
     scan(["\n[eliza] Are there a lot of " + major + " majors in " + hometown + "?\n\n"], False)
-    scan(["\n[eliza] So " + name + ", earlier you described " + major + " by saying " + pronoun_flip(feelings) + ". Does that still hold true?\n\n"], False)
+    scan(["\n[eliza] So " + name + ", earlier you described " + major + " by saying " + pronoun_flip(feelings) +
+          ". Does that still hold true?\n\n"], False)
     scan((ask_other()), False)
     if name == 'Goodbye':
         print('\n[eliza] See ya')
@@ -418,18 +489,7 @@ def main_script():
         print('\n[eliza] It was nice talking to you, ' + name + '. Have a great rest of your day.')
 
 
+# input:
+# output:
+# description:
 main_script()
-
-# regex = r"(?:(?:I|you|he|she|they|we|it)(?:.*)\s(?:know|think|feel|seem)s?(?:\sthat\s)?(?:\slike\s)?)?(.*)\bme\b([
-# ^!\.?\n]*)(.*)$"
-#
-# test_str = input('Why did you come here today?\n'.upper())
-#
-# subst = "Why do you feel like \\1you\\2?"
-#
-# result = re.sub(regex, subst, test_str, 0, re.MULTILINE | re.IGNORECASE)
-#
-# if result:
-#     print(result.upper())
-
-# Main
