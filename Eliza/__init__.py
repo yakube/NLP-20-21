@@ -1,3 +1,110 @@
+# --------------------------------------------
+# Eliza the Academic Advisor
+# Made by Jacob Schnoor
+# 9/24/20
+#
+# ==What is it?:
+#
+# Eliza was a program initially created in the 1960s to simulate the role of a Rogerian psychotherapist. Instead of
+# providing any concrete answers to specific questions, Eliza would merely manipulate user input and pry deeper into
+# WHY users believe certain things about themselves or the world. The program did this largely by taking some input,
+# x, and asking "Why do you believe x?" or "Why do you ask x?"
+#
+# The program I have created uses a similar concept. It provides no genuine information that the user does not
+# already know. Instead, it merely asks more and more WHY you are asking about x or why you feel x way.
+#
+# An example of a user conversation is as follows:
+#
+# 	Can I ask you a question?
+#
+# 	[eliza] What's your question
+#
+# 	What's your favorite color?
+#
+# 	[eliza] Why do you ask what's my favorite color?
+#
+# 	I want to know what it is
+#
+# 	[eliza] Why do you want to know what it is?
+#
+# And so on, often until the user expresses frustration, confusion, or befuddlement.
+#
+# The main approach I have taken in trying to simulate a conversation is to essentially have a preset "script" of
+# trivial questions for Eliza to ask the user. These questions involve asking for favorite colors, favorite foods,
+# hometowns, and so on until the user presumably grows impatient and derails the conversation.
+#
+# The program has a general detection system for derailment ("is_derailment()"). This general system uses many
+# subsystems involving regular expressions to detect possible sources of derailment (things like asking a question,
+# swearing, uncertainty, and apologizing)
+#
+# By using a preset script, along with derailment detection, the goal is that Eliza will always be actively saying
+# something to the user. The user on the other hand is free at any point in the dialogue to change topics or ask to
+# leave.
+#
+# If the user gets distracted momentarily, Eliza will attempt to bring the conversation back to trivial questions.
+# She will even remember a few pieces of information and incorporate those into her questions.
+#
+# An example is as follows:
+#
+# 	[eliza] Could you speak a little more clearly?
+#
+# 	About what?
+#
+# 	[eliza] So getting back on topic...
+#
+# 	[eliza] Why did you decide to study Chemical Engineering?
+#
+# 	Because math and science
+#
+# 	[eliza] Are there a lot of Chemical Engineering majors in Inver Grove Heights?
+#
+# 	Not a lot from Inver Grove but I've met a few people
+#
+#   [eliza] So Nick, earlier you described Chemical Engineering by saying you think it suits you pretty well. Does that
+#    still hold true?
+#
+# 	Yes
+#
+#
+# ==How Does it work?
+#
+# Eliza the Academic Advisor can be thought of as having 3 parts:
+# 	-The script
+# 	-The extraction
+# 	-And the derailment
+#
+# The script is relatively straightforward in a programming sense because all it requires is that Eliza prints off a
+# series of prewritten phrases, questions, and so forth. These include, for example, saying things like "Hi,
+# my name is Eliza. What's your name?"
+#
+# A mild complication arises when the user faces repetition in the way questions are phrased. To alleviate this
+# somewhat, there are the ask_QUESTION() and respond_DERAILMENT() functions (pattern of names rather than literal
+# names). These are mainly just glorified arrays of possible strings that are passed into the randologue() function.
+# By using modulo division, and random number generation, the dialogue options are somewhat randomized.
+#
+#
+# The extraction methods are named in the pattern of extract_INFORMATION(). These methods are heavily dependent on
+# regular expressions and, like the name suggests, they extract the relevant bit of information from a string of input.
+#
+# extract_name() for example takes in a statement like "Hello, my name is John Smith and my favorite color is green"
+# and returns just the word "John". By using these methods, Eliza can store quick facts about the user and bring them
+# up later in conversation as part of her dialogue options.
+#
+#
+# Finally, the derailment system is what makes the conversation less linear. It is realized primarily through the
+# scan() function which references many other is_DISTRACTION() type functions. The generic function, is_derailment(),
+# calls all the other functions and gives a general consensus on whether the user is really answering the question or
+# not.
+#
+# By using regular expressions, as well as the Profanity library for Python, Eliza can do some basic pattern
+# matching. If the user is asking their own question, swearing at the program, or just generally typing gibberish,
+# Eliza will respond in the appropriate ways.
+#
+#
+# When all is said and done, Eliza says goodbye to the user and tells them to enjoy the rest of their day.
+# --------------------------------------------
+
+
 import re
 from random import randint
 from profanity import profanity
@@ -7,9 +114,11 @@ my_rand_int = randint(0, 19)
 said_goodbye = False
 
 
-# input:
-# output:
-# description:
+# type:         miscellaneous
+# input:        a string of user input
+# output:       the same user input but with "my" turned into "your", "me" turned into "you", etc.
+# description:  uses numerous regular expression substitutions to quickly flip pronouns and deal with some common
+#               grammatical errors
 def pronoun_flip(user_in):
     # start out lowercase
     user_in = user_in.lower()
@@ -62,18 +171,20 @@ def pronoun_flip(user_in):
     return user_in
 
 
-# input:
-# output:
-# description:
+# type:         ask_QUESTION()
+# input:        n/a
+# output:       an array of possible "What's your name?" questions to ask
+# description:  an array of strings. it worked somewhat better wrapped in a function
 def ask_name():
     return [
         '\n[eliza] Hi my name is Eliza. What\'s your name?\n\n'
     ]
 
 
-# input:
-# output:
-# description:
+# type:         ask_QUESTION()
+# input:        n/a
+# output:       an array of possible "What's your major?" questions to ask
+# description:  an array of strings. it worked somewhat better wrapped in a function
 def ask_major():
     return [
         '\n[eliza] ' + name + ', that\'s right. I think I remember you from orientation. What is your major?\n\n',
@@ -84,18 +195,20 @@ def ask_major():
     ]
 
 
-# input:
-# output:
-# description:
+# type:         ask_QUESTION()
+# input:        n/a
+# output:       an array of possible "How are you liking your major?" questions to ask
+# description:  an array of strings. it worked somewhat better wrapped in a function
 def ask_feelings():
     return [
         '\n[eliza] So your major is ' + major + '? How are you liking it so far?\n\n',
     ]
 
 
-# input:
-# output:
-# description:
+# type:         ask_QUESTION()
+# input:        n/a
+# output:       an array of possible "Where are you from?" questions to ask
+# description:  an array of strings. it worked somewhat better wrapped in a function
 def ask_hometown():
     return [
         '\n[eliza] What is your hometown?\n\n',
@@ -103,9 +216,10 @@ def ask_hometown():
     ]
 
 
-# input:
-# output:
-# description:
+# type:         ask_QUESTION()
+# input:        n/a
+# output:       an array of possible "When do you expect to graduate?" questions to ask
+# description:  an array of strings. it worked somewhat better wrapped in a function
 def ask_gradyear():
     return [
         '\n[eliza] What year do you expect to graduate?\n\n',
@@ -113,9 +227,10 @@ def ask_gradyear():
     ]
 
 
-# input:
-# output:
-# description:
+# type:         ask_QUESTION()
+# input:        n/a
+# output:       an array of possible "Do you have any other questions for me?" questions to ask
+# description:  an array of strings. it worked somewhat better wrapped in a function
 def ask_other():
     return [
         '\n[eliza] Well if you didn\'t have any other questions then I guess I\'ll be on my way...\n\n',
@@ -123,9 +238,10 @@ def ask_other():
     ]
 
 
-# input:
-# output:
-# description:
+# type:         respond_DERAILMENT()
+# input:        n/a
+# output:       an array of possible "Don't use that language!" statements to respond to swearing
+# description:  an array of strings. it worked somewhat better wrapped in a function
 def respond_swear():
     return [
         '\n[eliza] Hey! There\'s no need for that kind of language.\n\n',
@@ -134,9 +250,10 @@ def respond_swear():
     ]
 
 
-# input:
-# output:
-# description:
+# type:         respond_DERAILMENT()
+# input:        n/a
+# output:       an array of possible "I don't understand you" statements to respond to gibberish
+# description:  an array of strings. it worked somewhat better wrapped in a function
 def respond_gibberish():
     return [
         '\n[eliza] I\'m sorry. I can\'t understand you.\n\n',
@@ -145,9 +262,10 @@ def respond_gibberish():
     ]
 
 
-# input:
-# output:
-# description:
+# type:         respond_DERAILMENT()
+# input:        n/a
+# output:       an array of possible "What did you want to ask me?" questions to respond to question requests
+# description:  an array of strings. it worked somewhat better wrapped in a function
 def respond_question_request():
     return [
         '\n[eliza] Sure. What did you want to ask me?\n\n',
@@ -155,9 +273,11 @@ def respond_question_request():
     ]
 
 
-# input:
-# output:
-# description:
+# type:         respond_DERAILMENT()
+# input:        a string of user input
+# output:       an array of possible "Why do you ask x?" questions to respond to questions
+# description:  an array of strings. it is made a little more complicated by scanning for specific types of questions.
+#               if a user asks "How many x do I need", it responds "How many x do you think you need?"
 def respond_question(user_in):
     responses = []
 
@@ -189,9 +309,11 @@ def respond_question(user_in):
     return responses
 
 
-# input:
-# output:
-# description:
+# type:         respond_DERAILMENT()
+# input:        n/a
+# output:       an array of possible "Oh are you leaving?" questions to respond to requests to leave
+# description:  an array of strings. it worked somewhat better wrapped in a function
+#               *NOTE: User cannot actually say "no" to leaving. Once they have said "goodbye", Eliza shuts down
 def respond_bye():
     return [
         '\n[eliza] Oh, are you leaving?\n\n',
@@ -200,9 +322,11 @@ def respond_bye():
     ]
 
 
-# input:
-# output:
-# description:
+# type:         respond_DERAILMENT()
+# input:        n/a
+# output:       an array of possible "It's okay" statements to respond to apologies
+# description:  an array of strings. it worked somewhat better wrapped in a function
+#               apologies may happen after user swears and Eliza shows annoyance
 def respond_apology():
     return [
         '\n[eliza] It\'s okay\n\n',
@@ -211,9 +335,10 @@ def respond_apology():
     ]
 
 
-# input:
-# output:
-# description:
+# type:         respond_DERAILMENT()
+# input:        n/a
+# output:       an array of possible "Why don't you know?" questions to respond to uncertainty
+# description:  an array of strings. it worked somewhat better wrapped in a function
 def respond_unsure():
     return [
         '\n[eliza] You sound confused.\n\n',
@@ -222,9 +347,11 @@ def respond_unsure():
     ]
 
 
-# input:
-# output:
-# description:
+# type:         respond_DERAILMENT()
+# input:        n/a
+# output:       an array of possible "Why are you x?/Why am I x?" questions to respond to declarations
+# description:  an array of strings. it is made somewhat more complicated by scanning for regular expressions
+#               statements like "I am happy" are replaced by "Why are you happy?"
 def respond_declaration(user_in):
     responses = []
 
@@ -264,9 +391,10 @@ def respond_declaration(user_in):
     return responses
 
 
-# input:
-# output:
-# description:
+# type:         respond_DERAILMENT()
+# input:        n/a
+# output:       an array of possible "Anyways..." statements to return to the topic at hand
+# description:  an array of strings. it worked somewhat better wrapped in a function
 def topic_change():
     return [
         '\n[eliza] Anyways, like I was saying...',
@@ -275,16 +403,19 @@ def topic_change():
     ]
 
 
-# input:
-# output:
-# description:
+# type:         is_DISTRACTION()
+# input:        a string of user input
+# output:       whether or not the user is swearing
+# description:  makes use of the Profanity Library for Python
 def is_swearing(user_in):
     return profanity.contains_profanity(user_in)
 
 
-# input:
-# output:
-# description:
+# type:         is_DISTRACTION()
+# input:        a string of user input
+# output:       whether or not the user is speaking nonsense
+# description:  uses a regular expression to see if any words do not contain vowels or if any letters are repeated
+#               3 or more times. does not catch everything, but it catches stuff like "grrrr" or "ksjjhgfsdjhf"
 def is_gibberish(user_in):
     regex = r"(((.*?)((^|[\n\t ])[^aeiouy\s\n0-9]+($|[\n\t ]))+(.*))|((.*?)(a{3,}|b{3,}|c{3,}|d{3,}|e{3,}|f{3,}|g{3," \
             r"}|h{3,}|i{3,}|j{3,}|k{3,}|l{3,}|m{3,}|n{3,}|o{3,}|p{3,}|q{3,}|r{3,}|s{3,}|t{3,}|u{3,}|v{3,}|w{3,}|x{3," \
@@ -295,9 +426,10 @@ def is_gibberish(user_in):
         return False
 
 
-# input:
-# output:
-# description:
+# type:         is_DISTRACTION()
+# input:        a string of user input
+# output:       whether or not the user wants to ask a question
+# description:  makes use of a regular expression to see if a user said the words "question" or "ask"
 def is_question_request(user_in):
     regex = r".*\b(question|ask)\b.*"
     if re.match(regex, user_in, re.MULTILINE | re.IGNORECASE):
@@ -306,9 +438,10 @@ def is_question_request(user_in):
         return False
 
 
-# input:
-# output:
-# description:
+# type:         is_DISTRACTION()
+# input:        a string of user input
+# output:       whether or not the user is currently asking a question
+# description:  makes use of a regular expression to see if a user said "who", "what", "when", etc. followed by content
 def is_question(user_in):
     regex = r"^(.*[\.!,]\s)?((\bcan('?t)?\b)|(\bwould(n'?t)?\b)|(\bis(n'?t)?\b)|(\bare(n'?t)?\b)|(\bwill\b)|(" \
             r"\bwon'?t\b)|(\bwho('?se?)?\b)|(\bwhat('?s)?\b)|(\bwhere('?s)?\b)|(\bwhen('?s)?\b)|(\bwhy\b)|(\bhow\b)|(" \
@@ -319,9 +452,10 @@ def is_question(user_in):
         return False
 
 
-# input:
-# output:
-# description:
+# type:         is_DISTRACTION()
+# input:        a string of user input
+# output:       whether or not the user wants to leave
+# description:  makes use of a regular expression to see if a user said the words "goodbye", "stop", etc.
 def is_leaving(user_in):
     regex = r".*((\bgoodbye\b)|(\bfarewell\b)|(\bstop\b)|(\bexit\b)|(\bi'?m\sleaving\b)|(\b(to|will|gonna)\sleave\b)).*"
     if re.match(regex, user_in, re.MULTILINE | re.IGNORECASE):
@@ -330,9 +464,10 @@ def is_leaving(user_in):
         return False
 
 
-# input:
-# output:
-# description:
+# type:         is_DISTRACTION()
+# input:        a string of user input
+# output:       whether or not the user is apologizing
+# description:  makes use of a regular expression to see if a user said the word "sorry"
 def is_apologizing(user_in):
     regex = r".*\b(sorry)\b.*"
     if re.match(regex, user_in, re.MULTILINE | re.IGNORECASE):
@@ -341,9 +476,10 @@ def is_apologizing(user_in):
         return False
 
 
-# input:
-# output:
-# description:
+# type:         is_DISTRACTION()
+# input:        a string of user input
+# output:       whether or not the user is declaring something
+# description:  makes use of a regular expression to see if a user said something like "I am x" or "You are x"
 def is_declaring(user_in):
     regex = r"^(.*[\.!?,]\s)?((\byou\b)|(\bi'?m?\b))(\s(\bam\b)|(\bare\b)|(\bis\b))?(.*)"
     if re.match(regex, user_in, re.MULTILINE | re.IGNORECASE):
@@ -352,9 +488,10 @@ def is_declaring(user_in):
         return False
 
 
-# input:
-# output:
-# description:
+# type:         is_DISTRACTION()
+# input:        a string of user input
+# output:       whether or not the user is confused
+# description:  makes use of a regular expression to see if a user said they are unsure or don't know something
 def is_unsure(user_in):
     regex = r".*\b(confused?|i\sdon'?t\sknow)\b.*"
     if re.match(regex, user_in, re.MULTILINE | re.IGNORECASE):
@@ -363,9 +500,11 @@ def is_unsure(user_in):
         return False
 
 
-# input:
-# output:
-# description:
+# type:         is_DISTRACTION()
+# input:        a string of user input and whether an "I am" exception is allowed
+# output:       whether or not the user is derailing the conversation
+# description:  calls the other is_DISTRACTION() type functions and sees if any of them are active.
+#               exceptions are made for things like "I am John" which would expect an "I am" style declaration
 def is_derailment(user_in, allow_i_am):
     global said_goodbye
     off_topic = (
@@ -383,11 +522,10 @@ def is_derailment(user_in, allow_i_am):
     return off_topic
 
 
-# input:        array of dialogue options to be cycled through
-# output:       the dialogue string that is chosen
-# description:  selects an element in an array of up to 20 discrete dialogue options
-#               by cycling through sequentially then wrapping around (using modulo division)
-#               the starting point is randomized at startup in the variable, my_rand_int
+# type:         miscellaneous
+# input:        an array of dialogue options
+# output:       a string of the selected dialogue option
+# description:  uses modulo division with a random starting point to cycle through responses
 def randologue(option_array):
     global my_rand_int
     option = option_array[my_rand_int % len(option_array)]
@@ -397,9 +535,13 @@ def randologue(option_array):
     return option
 
 
-# input:        string containing any number of topics to derail conversation
-# output:       the user's answer to the original question
-# description:  calls clean_input, question_input, etc. to scan for any immediate things to address
+# type:         miscellaneous
+# input:        a string of user input and whether an "I am" exception is allowed
+# output:       true user input (not derailed)
+# description:  makes use of derailment detection to "force" the user to actually answer each question (unless they say
+#               goodbye). while the user continues to be distracted, Eliza will remember where the conversation left
+#               off by storing the dialogue array in the "options" variable. Users can be distracted for as long as
+#               they wish, but eventually Eliza will say "Anyways, like I was saying..." and get back on topic
 def scan(options, allow_i_am):
     global said_goodbye
     if said_goodbye:
@@ -432,10 +574,11 @@ def scan(options, allow_i_am):
     return user_in
 
 
-# input:        string that contains a user's first name
-# output:       the user's first name
-# description:  scans the sentence for instances such as "my name is..." or "i am..." then
-#               grabs the following word. otherwise it will just grab the first word
+# type:         extract_INFORMATION()
+# input:        a string of user input
+# output:       the user's actual name stripped of all context
+# description:  uses a regular expression to find out which word in the sentence is probably the first name
+#               Statements like "I am x" or "My name is x" would return just "x"
 def extract_name(test_str):
     regex = r"((.*\bmy\sname\sis\s)|(.*\bi\sam\s)|(.*\bi'?m\s)|(^\s))?(\S+)\b(.*)"
     subst = "\\6"
@@ -443,10 +586,11 @@ def extract_name(test_str):
     return result
 
 
-# input:        string that contains a user's major
-# output:       the user's major
-# description:  scans the sentence for instances such as "my major is..." or "i'm studying..." then
-#               grabs the following words. otherwise it will just grab the first words
+# type:         extract_INFORMATION()
+# input:        a string of user input
+# output:       the user's actual major stripped of all context
+# description:  uses a regular expression to find out which word in the sentence is probably the major
+#               Statements like "It's x" or "I'm studying x" would return just "x"
 def extract_major(test_str):
     regex = r"(^.*((\bis\b)|(\bwas\b)|(\bbe\b)|(\bit'?s\b)|(\bstudy(ing)?\b))\s)?(.*)"
     subst = "\\9"
@@ -454,9 +598,11 @@ def extract_major(test_str):
     return result
 
 
-# input:
-# output:
-# description:
+# type:         extract_INFORMATION()
+# input:        a string of user input
+# output:       the user's actual hometown stripped of all context
+# description:  uses a regular expression to find out which word in the sentence is probably the hometown
+#               Statements like "I am from x" or "I grew up in x" would return just "x"
 def extract_hometown(test_str):
     regex = r"^((.*\bfrom\s\b)|(.*\bin\b\s))?(.*)"
     subst = "\\4"
@@ -464,9 +610,11 @@ def extract_hometown(test_str):
     return result
 
 
-# input:
-# output:
-# description:
+# type:         miscellaneous
+# input:        n/a
+# output:       the Eliza program
+# description:  the main script of the program which calls all the other functions. the focus is preset dialogue but
+#               always with the possibility of derailment
 def main_script():
     global name, major
     print("This is Eliza the Academic Advisor, made by Jacob Schnoor")
@@ -489,7 +637,5 @@ def main_script():
         print('\n[eliza] It was nice talking to you, ' + name + '. Have a great rest of your day.')
 
 
-# input:
-# output:
-# description:
+# Merely calls the main_script() function to get the program running
 main_script()
