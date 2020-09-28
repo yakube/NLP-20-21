@@ -11,7 +11,7 @@ def bi_gram_array(word, population):
         if word != '' and word == population[x]:
             return_array.append(population[x + 1])
         elif word == '' and re.match(r"[.!?]", population[x]):
-            if not re.match(r"[.!?,\'\"\\/:;\[\]{}()@#$%^&*_\-+=|<>`~]", population[x + 1]):
+            if not re.match(r"[.!?,'\"\\/:;\[\]{}()@#$%^&*_\-+=|<>`~]", population[x + 1]):
                 return_array.append(population[x + 1])
     return return_array
 
@@ -23,7 +23,7 @@ def tri_gram_array(previous_word, word, population):
             if word != '' and re.match(r"[.!?]", population[x]) and word == population[x + 1]:
                 return_array.append(population[x + 2])
             elif word == '' and re.match(r"[.!?]", population[x + 1]):
-                if not re.match(r"[.!?,\'\"\\/:;\[\]{}()@#$%^&*_\-+=|<>`~]", population[x + 2]):
+                if not re.match(r"[.!?,'\"\\/:;\[\]{}()@#$%^&*_\-+=|<>`~]", population[x + 2]):
                     return_array.append(population[x + 2])
         else:
             if previous_word == population[x] and word == population[x + 1]:
@@ -56,9 +56,9 @@ def main(argv):
     print("\nSentences:\n")
     language_model = []
     for x in argv[2:]:
-        f = open(x)
+        f = open(x, encoding='utf8')
         for y in f.read().lower():
-            if re.match(r"[.!?,\'\"\\/:;\[\]{}()@#$%^&*_\-+=|<>`~]", y):
+            if re.match(r"[.!?,'\"\\/:;\[\]{}()@#$%^&*_\-+=|<>`~]", y):
                 if current_string != '':
                     language_model.append(current_string)
                 language_model.append(y)
