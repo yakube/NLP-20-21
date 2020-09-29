@@ -11,7 +11,7 @@ def bi_gram_array(word, population):
         if word != '' and word == population[x]:
             return_array.append(population[x + 1])
         elif word == '' and re.match(r"[.!?]", population[x]):
-            if not re.match(r"[.!?,'\"\\/:;\[\]{}()@#$%^&*_\-+=|<>`~]", population[x + 1]):
+            if re.match(r"[a-z]+", population[x + 1], re.MULTILINE | re.IGNORECASE):
                 return_array.append(population[x + 1])
     return return_array
 
@@ -23,7 +23,7 @@ def tri_gram_array(previous_word, word, population):
             if word != '' and re.match(r"[.!?]", population[x]) and word == population[x + 1]:
                 return_array.append(population[x + 2])
             elif word == '' and re.match(r"[.!?]", population[x + 1]):
-                if not re.match(r"[.!?,'\"\\/:;\[\]{}()@#$%^&*_\-+=|<>`~]", population[x + 2]):
+                if re.match(r"[a-z]+", population[x + 2], re.MULTILINE | re.IGNORECASE):
                     return_array.append(population[x + 2])
         else:
             if previous_word == population[x] and word == population[x + 1]:
@@ -53,22 +53,23 @@ def main(argv):
     print("Using a " + str(n) + "-gram model to generate " + str(m) + " random sentences\nFiles:\n")
     for x in argv[2:]:
         print(x)
-    print("\nSentences:\n")
     language_model = []
     for x in argv[2:]:
         f = open(x, encoding='utf8')
         for y in f.read().lower():
-            if re.match(r"[.!?,'\"\\/:;\[\]{}()@#$%^&*_\-+=|<>`~]", y):
+            if re.match(r"[.!?,;:\']+", y, re.MULTILINE | re.IGNORECASE):
                 if current_string != '':
                     language_model.append(current_string)
                 language_model.append(y)
                 current_string = ""
-            elif re.match(r"\s", y):
+            elif re.match(r"[^a-z0-9.!?,\']+", y, re.MULTILINE | re.IGNORECASE):
                 if current_string != '':
                     language_model.append(current_string)
-                current_string = ""
+                current_string = ''
             else:
                 current_string = current_string + y
+    print("\nTotal Tokens: " + str(len(language_model)))
+    print("\nSentences:\n")
     for x in range(m):
         output_string = ''
         previous_element = ''
@@ -82,6 +83,9 @@ def main(argv):
             print(output_string.capitalize() + random_element + "\n")
     # except:
     # print("\n##Command Invalid##\n")
+    # print('\n\n\n')
+    # for x in language_model:
+    #     print(x)
 
 
 if __name__ == "__main__":
