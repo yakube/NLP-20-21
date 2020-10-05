@@ -1,8 +1,10 @@
 #!/usr/bin/python
 
+import glob
+import os
+import random
 import re
 import sys
-import random
 
 
 def bi_gram_array(word, population):
@@ -45,16 +47,25 @@ def pick_random_element(previous_word, word, population, n):
 
 def main(argv):
     current_string = ""
-    # try:
-    # print(argv)
     n = int(argv[0])
     m = int(argv[1])
+    file_names = []
+
     print("\nRandom Talker made by Jacob Schnoor. CS 4242.\n")
     print("Using a " + str(n) + "-gram model to generate " + str(m) + " random sentences\nFiles:\n")
-    for x in argv[2:]:
+
+    if argv[2] == '-f':
+        os.chdir(argv[3])
+        for file in glob.glob("*.txt"):
+            file_names.append(file)
+    else:
+        for x in argv[2:]:
+            file_names.append(x)
+    for x in file_names:
         print(x)
+
     language_model = []
-    for x in argv[2:]:
+    for x in file_names:
         f = open(x, encoding='utf8')
         for y in f.read().lower():
             if re.match(r"[.!?,;:\']+", y, re.MULTILINE | re.IGNORECASE):
@@ -70,6 +81,7 @@ def main(argv):
                 current_string = current_string + y
     print("\nTotal Tokens: " + str(len(language_model)))
     print("\nSentences:\n")
+
     for x in range(m):
         output_string = ''
         previous_element = ''
@@ -81,11 +93,6 @@ def main(argv):
             previous_element = baton_passer
         if re.match(r'[.!?]', random_element):
             print(output_string.capitalize() + random_element + "\n")
-    # except:
-    # print("\n##Command Invalid##\n")
-    # print('\n\n\n')
-    # for x in language_model:
-    #     print(x)
 
 
 if __name__ == "__main__":
