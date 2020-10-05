@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 import glob
 import os
 import random
@@ -46,10 +44,10 @@ def pick_random_element(previous_word, word, population, n):
 
 
 def main(argv):
-    current_string = ""
     n = int(argv[0])
     m = int(argv[1])
     file_names = []
+    language_model = []
 
     print("\nRandom Talker made by Jacob Schnoor. CS 4242.\n")
     print("Using a " + str(n) + "-gram model to generate " + str(m) + " random sentences\nFiles:\n")
@@ -62,23 +60,12 @@ def main(argv):
         for x in argv[2:]:
             file_names.append(x)
     for x in file_names:
+        f = open(x, encoding='utf8')
+        f_string = re.sub(r"([^a-z0-9\s])", " \\1 ", f.read().lower())
+        for y in re.split(r"\s+", f_string):
+            language_model.append(y)
         print(x)
 
-    language_model = []
-    for x in file_names:
-        f = open(x, encoding='utf8')
-        for y in f.read().lower():
-            if re.match(r"[.!?,;:\']+", y, re.MULTILINE | re.IGNORECASE):
-                if current_string != '':
-                    language_model.append(current_string)
-                language_model.append(y)
-                current_string = ""
-            elif re.match(r"[^a-z0-9.!?,\']+", y, re.MULTILINE | re.IGNORECASE):
-                if current_string != '':
-                    language_model.append(current_string)
-                current_string = ''
-            else:
-                current_string = current_string + y
     print("\nTotal Tokens: " + str(len(language_model)))
     print("\nSentences:\n")
 
