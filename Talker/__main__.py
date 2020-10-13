@@ -209,6 +209,7 @@ def main(argv):
         for y in re.split(r"\s+", f_string):
             language_model.append(y)
         print(x)
+        f.close()
 
     # Informational text
     print("\nTotal Tokens: " + str(len(language_model)))
