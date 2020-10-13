@@ -1,4 +1,7 @@
 # Testing Program
+# regex=      r"^\s*(\S+)(?: (\S+))?     (\d).*$"
+# use \\1 \\2 \\3 to capture respectively
+# if 2 is blank, then it's a unigram
 import sys
 
 
