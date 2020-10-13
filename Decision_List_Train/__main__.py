@@ -36,10 +36,12 @@ def main(argv):
                 n_corrected.append(x)
         if n_corrected[1] == str(0):
             word_0_counter.update(n_corrected[2:])
-            word_0_counter.update(zip_longest(n_corrected, islice(n_corrected[3:], 1, None)))
+            the_long_zip = zip_longest(n_corrected, islice(n_corrected[2:], 1, None))
+            word_0_counter.update([str(ele[0]) + " " + str(ele[1]) for ele in the_long_zip])
         elif n_corrected[1] == str(1):
             word_1_counter.update(n_corrected[2:])
-            word_1_counter.update(zip_longest(n_corrected, islice(n_corrected[3:], 1, None)))
+            the_long_zip = zip_longest(n_corrected, islice(n_corrected[2:], 1, None))
+            word_1_counter.update([str(ele[0]) + " " + str(ele[1]) for ele in the_long_zip])
 
     word_total_counter = word_0_counter + word_1_counter
     value_dictionary = {}
@@ -53,9 +55,17 @@ def main(argv):
                 value_dictionary[x] = 1
             strength_dictionary[x] = abs(log_ratio)
 
+    f.close()
+    f = open(output_name, "w")
     strength_dictionary = sorted(strength_dictionary.items(), key=lambda k: k[1], reverse=True)
-    for x, count in strength_dictionary[:25]:
-        print('%20s\t%3d\t%3f' % (x[:20], value_dictionary[x], count))
+    for x, count in strength_dictionary[:100000]:
+        f.write('%20s     %1d     %3f' % (x[:20], value_dictionary[x], count)+"\n")
+    f.close()
+
+    print("Top 10 Preview\n(0 = negative, 1 = positive)")
+    print("---------------------------------------")
+    for x, count in strength_dictionary[:10]:
+        print('%20s     %1d     %3f' % (x[:20], value_dictionary[x], count))
 
 
 if __name__ == "__main__":
