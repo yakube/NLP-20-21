@@ -4,6 +4,7 @@ import math
 import re
 import sys
 from collections import Counter
+from itertools import islice, zip_longest
 
 
 def main(argv):
@@ -35,8 +36,10 @@ def main(argv):
                 n_corrected.append(x)
         if n_corrected[1] == str(0):
             word_0_counter.update(n_corrected[2:])
+            word_0_counter.update(zip_longest(n_corrected, islice(n_corrected[3:], 1, None)))
         elif n_corrected[1] == str(1):
             word_1_counter.update(n_corrected[2:])
+            word_1_counter.update(zip_longest(n_corrected, islice(n_corrected[3:], 1, None)))
 
     word_total_counter = word_0_counter + word_1_counter
     value_dictionary = {}
