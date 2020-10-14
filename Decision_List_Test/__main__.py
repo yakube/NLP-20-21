@@ -61,7 +61,7 @@ def main(argv):
     decision_file.close()
     test_file.close()
     output_file.close()
-    print(";) <3")
+    print("PROCESS COMPLETE")
 
 
 if __name__ == "__main__":
