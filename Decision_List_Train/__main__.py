@@ -164,12 +164,16 @@ def main(argv):
     # 8) I open the output file
     f = open(output_name, "w")
 
-    # 7)
+    # 7) I set the strength dictionary equal to a sorted version of itself using the sort function. This dictionary
+    # holds absolute values of log ratios (magnitudes)
+    # 8) I then print the first 100,000 words in order of strengths and print off each of their associated
+    # classifications as well
     strength_dictionary = sorted(strength_dictionary.items(), key=lambda k: k[1], reverse=True)
     for x, count in strength_dictionary[:100000]:
         f.write('%20s     %1d     %3f' % (x[:20], value_dictionary[x], count)+"\n")
     f.close()
 
+    # 9) I print a top 10 preview of the decision list just as a sanity check for the user to confirm everything worked
     print("Top 10 Preview\n(0 = negative, 1 = positive)")
     print("---------------------------------------")
     for x, count in strength_dictionary[:10]:
