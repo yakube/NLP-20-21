@@ -28,3 +28,13 @@ king woman
 queen man
 queen woman
 babbage lovelace
+jacob schnoor
+ted pedersen
+schnoor pedersen
+mac cheese
+macaroni cheese
+pizza spaghetti
+pizza calzone
+burger sandwich
+man person
+woman person

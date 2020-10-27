@@ -10,6 +10,9 @@ word_pairs = Counter([])
 word_counter = Counter([])
 
 
+# Should probably verify stuff on small test data then comment it
+# But I think I'm basically done
+
 def get_coconut(word_1, word_2):
     return word_pairs[tuple((word_1, word_2))] + word_pairs[tuple((word_2, word_1))]
 
@@ -19,8 +22,8 @@ def get_pmi(word_1, word_2):
     prob_1 = word_counter[word_1] / total
     prob_2 = word_counter[word_2] / total
     prob_coconut = get_coconut(word_1, word_2) / total
-    if prob_1 == 0 or prob_2 == 0 or prob_coconut==0:
-        return -999
+    if prob_1 == 0 or prob_2 == 0 or prob_coconut == 0:
+        return -999.99999
     else:
         return log(prob_coconut / (prob_1 * prob_2), 2)
 
@@ -36,9 +39,9 @@ def get_cosine(word_1, word_2):
             v_w_sum = v_w_sum + (v * w)
             v_squared_sum = v_squared_sum + (v * v)
             w_squared_sum = w_squared_sum + (w * w)
-    denominator = sqrt(v_squared_sum)*sqrt(w_squared_sum)
+    denominator = sqrt(v_squared_sum) * sqrt(w_squared_sum)
     if denominator == 0:
-        return -999
+        return -999.99999
     else:
         return v_w_sum / denominator
 
