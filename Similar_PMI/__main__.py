@@ -33,12 +33,12 @@ def get_cosine(word_1, word_2):
     v_squared_sum = 0
     w_squared_sum = 0
     for element in list(word_counter):
-        if element != word_1 and element != word_2:
-            v = get_coconut(word_1, element)
-            w = get_coconut(word_2, element)
-            v_w_sum = v_w_sum + (v * w)
-            v_squared_sum = v_squared_sum + (v * v)
-            w_squared_sum = w_squared_sum + (w * w)
+        # if element != word_1 and element != word_2:
+        v = get_coconut(word_1, element)
+        w = get_coconut(word_2, element)
+        v_w_sum = v_w_sum + (v * w)
+        v_squared_sum = v_squared_sum + (v * v)
+        w_squared_sum = w_squared_sum + (w * w)
     denominator = sqrt(v_squared_sum) * sqrt(w_squared_sum)
     if denominator == 0:
         return -999.99999
