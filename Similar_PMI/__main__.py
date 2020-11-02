@@ -10,8 +10,7 @@ word_pairs = Counter([])
 word_counter = Counter([])
 
 
-# Should probably verify stuff on small test data then comment it
-# But I think I'm basically done
+# Just need to comment it
 
 def get_coconut(word_1, word_2):
     return word_pairs[tuple((word_1, word_2))] + word_pairs[tuple((word_2, word_1))]
@@ -33,7 +32,6 @@ def get_cosine(word_1, word_2):
     v_squared_sum = 0
     w_squared_sum = 0
     for element in list(word_counter):
-        # if element != word_1 and element != word_2:
         v = get_coconut(word_1, element)
         w = get_coconut(word_2, element)
         v_w_sum = v_w_sum + (v * w)
@@ -66,7 +64,6 @@ def main(argv):
             words = re.sub(r"[^[a-z0-9\s]", "", line, 0, re.IGNORECASE).lower().split()
             word_counter.update(words)
             for x in range(1, window_size):
-                # print(list(zip(words, islice(words, x, None))))
                 word_pairs.update(zip(words, islice(words, x, None)))
 
     print("Tokens =\t\t" + str(sum(word_counter.values())))
