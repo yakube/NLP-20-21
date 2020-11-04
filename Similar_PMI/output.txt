@@ -1,0 +1,109 @@
+(venv) C:\Users\cubbe\PycharmProjects\NLP 20-21>python Similar_PMI 2 PA4-News-2011 word-pairs.txt
+
+Similar to a Point. CS4242. Made by Jacob Schnoor
+Computing similarity from a word by word PMI co-occurrence matrix
+
+Window Size:            2
+Corpus Folder:          PA4-News-2011
+Test Pairs File:        word-pairs.txt
+
+Tokens =                45783633
+Types =                 198211
+
+Cosine          Word 1          Word 2          Word 1 Count    Word 2 Count    Co-Count        PMI
+------          ------          ------          ------------    ------------    --------        ---
+0.31192         line            cord            10525           176             0               -999.99999
+0.61681         line            queue           10525           99              0               -999.99999
+0.49765         line            text            10525           2112            0               -999.99999
+0.32709         car             automobile      12353           394             0               -999.99999
+0.46011         swedish         finnish         856             220             0               -999.99999
+0.28098         scientific      interest        1528            8239            8               4.86265
+0.10260         abdullah        shah            315             298             4               10.92995
+0.57720         baseball        football        1554            6619            8               5.15416
+0.79810         baseball        soccer          1554            1212            4               6.60338
+0.39219         clinton         bush            5423            3839            4               3.13694
+0.13613         clinton         gore            5423            310             0               -999.99999
+1.00000         clinton         clinton         5423            5423            0               -999.99999
+0.93634         russia          germany         3382            3983            20              6.08696
+0.63452         russia          mexico          3382            4106            19              5.96908
+0.63452         mexico          russia          4106            3382            19              5.96908
+0.05576         duluth          minnesota       174             1673            0               -999.99999
+0.00306         duluth          fargo           174             470             0               -999.99999
+0.13218         duluth          paris           174             2974            0               -999.99999
+0.50663         woman           homemaker       10674           63              0               -999.99999
+0.51398         man             homemaker       22142           63              0               -999.99999
+0.32817         woman           surgeon         10674           643             0               -999.99999
+0.34665         man             surgeon         22142           643             0               -999.99999
+0.67364         boy             brave           3053            474             0               -999.99999
+0.58049         girl            brave           5393            474             0               -999.99999
+0.71291         king            queen           4968            1186            2               3.95799
+0.43589         king            man             4968            22142           0               -999.99999
+0.33947         king            woman           4968            10674           0               -999.99999
+0.49049         queen           man             1186            22142           0               -999.99999
+0.36827         queen           woman           1186            10674           0               -999.99999
+-999.99999      babbage         lovelace        0               8               0               -999.99999
+0.04977         ted             roosevelt       3180            218             0               -999.99999
+0.00907         ted             pedersen        3180            36              0               -999.99999
+0.05736         ted             johnson         3180            4466            0               -999.99999
+0.03378         turtle          tortoise        153             12              0               -999.99999
+0.08516         turtle          bird            153             1712            0               -999.99999
+0.14132         turtle          shoe            153             515             0               -999.99999
+0.51198         pizza           spaghetti       860             80              0               -999.99999
+0.16788         pizza           calzone         860             4               0               -999.99999
+0.88210         man             person          22142           8663            0               -999.99999
+0.80654         woman           person          10674           8663            0               -999.99999
+
+(venv) C:\Users\cubbe\PycharmProjects\NLP 20-21>python Similar_PMI 5 PA4-News-2011 word-pairs.txt
+
+Similar to a Point. CS4242. Made by Jacob Schnoor
+Computing similarity from a word by word PMI co-occurrence matrix
+
+Window Size:            5
+Corpus Folder:          PA4-News-2011
+Test Pairs File:        word-pairs.txt
+
+Tokens =                45783633
+Types =                 198211
+
+Cosine          Word 1          Word 2          Word 1 Count    Word 2 Count    Co-Count        PMI
+------          ------          ------          ------------    ------------    --------        ---
+0.78257         line            cord            10525           176             0               -999.99999
+0.85801         line            queue           10525           99              2               6.45744
+0.81042         line            text            10525           2112            0               -999.99999
+0.80501         car             automobile      12353           394             8               6.23370
+0.44402         swedish         finnish         856             220             0               -999.99999
+0.81724         scientific      interest        1528            8239            20              6.18457
+0.48627         abdullah        shah            315             298             4               10.92995
+0.86855         baseball        football        1554            6619            30              7.06105
+0.89439         baseball        soccer          1554            1212            18              8.77331
+0.65725         clinton         bush            5423            3839            80              7.45887
+0.49652         clinton         gore            5423            310             8               7.76733
+1.00000         clinton         clinton         5423            5423            8               3.63858
+0.88354         russia          germany         3382            3983            73              7.95485
+0.79295         russia          mexico          3382            4106            23              6.24471
+0.79295         mexico          russia          4106            3382            23              6.24471
+0.11170         duluth          minnesota       174             1673            0               -999.99999
+0.03640         duluth          fargo           174             470             0               -999.99999
+0.12534         duluth          paris           174             2974            0               -999.99999
+0.64120         woman           homemaker       10674           63              3               7.67420
+0.63602         man             homemaker       22142           63              3               6.62151
+0.63808         woman           surgeon         10674           643             0               -999.99999
+0.67671         man             surgeon         22142           643             0               -999.99999
+0.78050         boy             brave           3053            474             0               -999.99999
+0.75502         girl            brave           5393            474             0               -999.99999
+0.87048         king            queen           4968            1186            32              7.95799
+0.76278         king            man             4968            22142           128             5.73538
+0.71662         king            woman           4968            10674           0               -999.99999
+0.76563         queen           man             1186            22142           0               -999.99999
+0.70337         queen           woman           1186            10674           0               -999.99999
+-999.99999      babbage         lovelace        0               8               0               -999.99999
+0.37748         ted             roosevelt       3180            218             0               -999.99999
+0.10715         ted             pedersen        3180            36              0               -999.99999
+0.46212         ted             johnson         3180            4466            0               -999.99999
+0.28489         turtle          tortoise        153             12              0               -999.99999
+0.51664         turtle          bird            153             1712            2               8.44947
+0.46849         turtle          shoe            153             515             0               -999.99999
+0.53788         pizza           spaghetti       860             80              0               -999.99999
+0.10063         pizza           calzone         860             4               0               -999.99999
+0.93786         man             person          22142           8663            24              2.51814
+0.87468         woman           person          10674           8663            8               1.98586

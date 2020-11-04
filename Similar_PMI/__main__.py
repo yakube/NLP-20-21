@@ -107,6 +107,19 @@ from collections import Counter
 from itertools import islice
 from math import sqrt, log
 
+# 3. The word_pairs and word_counter objects are both vital to this program. The Counter is a high performance container
+# type that can quickly handle duplicates and assign accurate counts to each respective element. Elements that are never
+# added have a default value of 0 (rather than throwing an error)
+
+# word_pairs records tuples of every pair of two words that is found in the corpus within a window size. Unfortunately,
+# order matters so these pairs must be "translated" in the get_coconut() function. The tuples are relatively easy to
+# create using a for loop and the "zip" function later on. While not technically a matrix, the word_pairs Counter holds
+# onto raw counts and is relatively easy to iterate through in the code. Using these raw counts, all vital statistics
+# can be calculated as needed
+
+# word_counter is simpler. It just gets updated with every token. Duplicate tokens are assimilated intuitively by
+# incrementing the relevant element. The length of word_counter is the number of unique tokens. The sum of all its
+# counts represents the total number of tokens in the corpus
 word_pairs = Counter([])
 word_counter = Counter([])
 
@@ -144,6 +157,7 @@ def get_pmi(word_1, word_2):
 # Assuming the denominator isn't a zero, get_cosine returns the dot_product divided by the product of vector lengths
 # Cosine(v,w) =    v·w
 #                 |v||w|
+# Note: To avoid divide-by-zero errors, -999.99999 is sometimes given as a dummy value
 def get_cosine(word_1, word_2):
     v_w_sum = 0
     v_squared_sum = 0
@@ -189,19 +203,45 @@ def main(argv):
             # 3. For every integer from 1 to the window size, update the word_pair Counter object with the tuples of
             # words separated x spaces apart.
             # This essentially takes a line of text along with a given window_size, and explicitly lists out all valid
-            # ordered pairs of word co-occurrences. It then updates the word_.....................................
+            # ordered pairs of word co-occurrences. It uses this list of all recorded tuples to update the word_pairs
+            # Counter object
+
+            # For example, take the sentence "mary had a little lamb"
+            # When x = 1
+            #   (mary, had)
+            #   (had, a)
+            #   (a, little)
+            #   (little, lamb)
+            # When x = 2
+            #   (mary, a)
+            #   (had, little)
+            #   (a, lamb)
+            # When x = 3
+            #   (mary, little)
+            #   (had, lamb)
+            # When x = 4
+            #   (mary, lamb)
+            # ...You get the idea
+
+            # All these ordered pairs are added to the word_pairs Counter, duplicates are dealt with intuitively, and
+            # we can access these word co-occurrence counts by merely specifying our two elements to the Counter.
             for x in range(1, window_size):
                 word_pairs.update(zip(words, islice(words, x, None)))
 
+    # 7. The program spits out other statistics regarding tokens and unique types. Counter objects are good about
+    # handling duplicates so both statistics are easy to grab from the word master list
     print("Tokens =\t\t" + str(sum(word_counter.values())))
     print("Types = \t\t" + str(len(word_counter)) + "\n")
 
+    # 8. This is just some formatting for the printed output
     header = '{0:15s} {1:15s} {2:15s} {3:15s} {4:15s} {5:15s} {6:15s}'
     template = '{0:<15.5f} {1:15s} {2:15s} {3:<15d} {4:<15d} {5:<15d} {6:<15.5f}'
 
     print(header.format("Cosine", "Word 1", "Word 2", "Word 1 Count", "Word 2 Count", "Co-Count", "PMI"))
     print(header.format("------", "------", "------", "------------", "------------", "--------", "---"))
 
+    # 8. This prints out, row by row, all the statistics of the word pairs from the word pairs file. Cosine, PMI,
+    # co-count, and others are trivial to access now that we have functions for them
     for line in test_pairs:
         split_line = line.split()
         word_1 = split_line[0]
