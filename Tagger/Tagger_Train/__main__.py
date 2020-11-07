@@ -6,6 +6,7 @@ from itertools import islice
 
 word_tag_pairs = Counter([])
 word_counter = Counter([])
+tag_counter = Counter([])
 word_tag_probs = dict()
 
 
@@ -20,18 +21,20 @@ def main(argv):
     r_split = re.split(r"(.*)(?<!\\)\/(.*)", open(input_filename, encoding="utf8").read())
 
     word_counter.update(islice(r_split, 1, None, 3))
+    tag_counter.update(islice(r_split, 2, None, 3))
     word_tag_pairs.update(zip(islice(r_split, 1, None, 3),
                               islice(r_split, 2, None, 3)))
 
-    # Need to make probability dictionary----------------------------------------------------------------......???
-    # for x in word_tag_pairs:
+    out = open(output_filename, "w")
+    for word, tag in word_tag_pairs:
+        word_tag_probs[(word, tag)] = (word_tag_pairs[(word, tag)] + 1) / (word_counter[word] + len(tag_counter))
 
-    # out = open(output_filename, "w")
-    # for word, word_count in word_counter.most_common():
-    #     for (pair_word, tag), pair_count in word_tag_pairs.most_common():
-    #         if pair_word == word:
-    #             out.write("{:15s}\t{:5s}\t{:8f}\n".format(word, tag, pair_count / word_count))
-    # out.close()
+    # for x in sorted(word_tag_probs.items(), key=lambda y: y[1], reverse=True):
+    for x in sorted(word_tag_probs, key=lambda y: (-word_tag_probs[y], y)):
+        out.write("{:30s}\t{:5s}\t{:8f}\n".format(x[0], x[1], word_tag_probs[x]))
+        # print(x)
+    out.close()
+    print("DONE")
 
 
 if __name__ == "__main__":
