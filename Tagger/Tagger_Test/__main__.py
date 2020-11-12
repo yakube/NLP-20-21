@@ -8,7 +8,11 @@ from itertools import islice
 from math import sqrt, log
 
 
-def find_something(word):
+def correct_known(word, previous_tag):
+    return previous_tag
+
+
+def correct_unknown(word):
     print(word)
     print(word[:1])
     if word[:1].isupper():
@@ -30,6 +34,7 @@ def main(argv):
 
     test_file = open(test_filename, encoding="utf8")
     out = open(output_filename, "w")
+    print(test_file)
     for line in test_file:
         probability_list = open(probability_listname, encoding="utf8")
         tag = "NN"
@@ -41,8 +46,11 @@ def main(argv):
                 has_found = True
                 tag = prob_line_split[1]
             next_line = probability_list.readline()
-        if not has_found and mode == 1:
-            tag = find_something(line[:-1])
+        if mode == 1:
+            if has_found:
+                tag = correct_known(line[:-1], tag)
+            else:
+                tag = correct_unknown(line[:-1])
         out.write(line[:-1] + "/" + tag + "\n")
     print("DONE")
 
