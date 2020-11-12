@@ -1,11 +1,6 @@
-# Evaluator Program
-import glob
-import os
 import re
 import sys
 from collections import Counter
-from itertools import islice
-from math import sqrt, log
 
 confusion = Counter([])
 equivocated = Counter([])
