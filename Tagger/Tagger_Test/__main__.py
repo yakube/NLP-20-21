@@ -68,49 +68,63 @@ import sys
 # 4) A - Rules for guessing at unseen words in Mode 1. Rules are explained below
 def correct_unknown(word, previous_tag):
     # A-1 : If the unseen word is preceded by a token of type "TO" it is determined to be a verb
-    # Example: "I like TO RUN" guesses that "RUN" is a verb
+    # Example: "[I like] to run" guesses that "RUN" is a verb
     if previous_tag == "TO":
         return "VB"
     if word[:1].isupper():
-        # A-2
+        # A-2 : If the unseen word starts with a capital letter and ends with an s, it is a plural proper noun
+        # Example: "[The] Johnsons"
         if word[-1:] == "s":
             return "NNPS"
-        # A-3
+        # A-3 : If the unseen word starts with a capital letter (but no s at the end), it is a singular proper noun
+        # Example: "[I bought these jeans from] Target" determines that "Target" is a name
         else:
             return "NNP"
     else:
-        # A-4
+        # A-4 : If the unseen word ends in s (but is not capitalized), it is a plural noun
+        # Example: "bananas"
         if word[-1:] == "s":
             return "NNS"
-        # A-5
+        # A-5 : If the unseen word is not capitalized and does not end in an s, it is default assumed to be a singular
+        # noun (but now with more possible filters beforehand as compared to Mode 0)
+        # Example: "banana"
         else:
             return "NN"
 
 
-# B - Rules
+# 5) B - Rules for correcting word type pairs that shouldn't be possible or are very rare. It operates sort of like a
+# bigram, but without actual training. These intuitions are more or less just guesses that turn out to be pretty helpful
+# (Type_1, Type_2) -> (Type_1, Type_3) is the general format I will use to describe type conversions below
+# Where Type_1 is the previous tag which is used for context
+# Type_2 is the original guess for the tag in question
+# and Type_3 is the final guess for the tag in question
 def correct_known(word, current_tag, previous_tag):
+    # Words marked as past tense verbs when should be past perfect
     if current_tag == "VBD":
-        # B-1
-        # B-2
-        # B-3
+        # B-1 : (VB, VBD) -> (VB, VBN)      "have talked"
+        # B-2 : (VBD, VBD) -> (VBD, VBN)    "had talked"
+        # B-3 : (VBN, VBD) -> (VBN, VBN)    "[have] been lifted"
         if previous_tag == "VB" or previous_tag == "VBD" or previous_tag == "VBN":
             return "VBN"
+    # Words marked as past perfect when they should be past tense
     elif current_tag == "VBN":
-        # B-4
-        # B-5
-        # B-6
-        # B-7
+        # B-4 : (NN, VBN) -> (NN, VBD)      "the dog walked"
+        # B-5 : (NNP, VBN) -> (NNP, VBD)    "Suzie walked"
+        # B-6 : (NNS, VBN) -> (NNS, VBD)    "[the] cows walked"
+        # B-7 : (NNPS, VBN) -> (NNPS, VBD)  "[the] Johnsons walked"
         if previous_tag == "NN" or previous_tag == "NNP" or previous_tag == "NNS" or previous_tag == "NNPS":
             return "VBD"
+    # Words marked as verbs in conjugated form when they should be infinitives
     elif current_tag == "VBP":
-        # B-8
+        # B-8 : (TO, VBP) -> (TO, VB)   "to run"
         if previous_tag == "TO":
             return "VB"
+    # Words marked as infinitives when they should be conjugated verbs
     elif current_tag == "VB":
-        # B-9
-        # B-10
-        # B-11
-        # B-12
+        # B-9:  (NN, VB) -> (NN, VBP)       "they walk"
+        # B-10: (NNP, VB) -> (NNP, VBP)     "Suzie walks"
+        # B-11: (NNS, VB) -> (NNS, VBP)     "[the] cows walk"
+        # B-12: (NNPS, VB) -> (NNPS, VBP)   "[the] Johnsons walk"
         if previous_tag == "NN" or previous_tag == "NNP" or previous_tag == "NNS" or previous_tag == "NNPS":
             return "VBP"
     return current_tag
