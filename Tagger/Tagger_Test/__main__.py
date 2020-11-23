@@ -98,7 +98,7 @@ def correct_unknown(word, previous_tag):
 # Where Type_1 is the previous tag which is used for context
 # Type_2 is the original guess for the tag in question
 # and Type_3 is the final guess for the tag in question
-def correct_known(word, current_tag, previous_tag):
+def correct_known(current_tag, previous_tag):
     # Words marked as past tense verbs when should be past perfect
     if current_tag == "VBD":
         # B-1 : (VB, VBD) -> (VB, VBN)      "have talked"
@@ -168,7 +168,7 @@ def main(argv):
         if mode == 1:
             # 5) If a word was found in the probability list, double check its veracity with B-rules
             if has_found:
-                tag = correct_known(line[:-1], tag, previous_tag)
+                tag = correct_known(tag, previous_tag)
             # 4) If nothing was found in the original probability list, guess the type using A-rules
             else:
                 tag = correct_unknown(line[:-1], previous_tag)
