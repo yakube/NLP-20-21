@@ -1,4 +1,4 @@
-# python Machine_Reader 0 Machine_Reader\PA6-MCTest\Train\mc500.train.tsv test.0.answers.txt
+# python Machine_Reader 0 PA6-MCTest\Train\mc500.train.tsv train.0.answers.txt
 # exactly 23 elements per row. First couple things are information, etc.
 import csv
 import sys
